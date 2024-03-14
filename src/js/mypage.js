@@ -1,4 +1,4 @@
-class MainPage {
+class MyPage {
   #app;
 
   constructor(app) {
@@ -10,4 +10,4 @@ class MainPage {
   setUI() {}
 }
 
-page = new MainPage(document);
+page = new MyPage(document);

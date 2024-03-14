@@ -10,3 +10,106 @@ body {
   height: 100vh;
   font-family: "nanumsquare";
 }
+body {
+  background-image: url(/assets/images/background.png);
+  background-size: cover; 
+  
+}
+.title_text {
+  color : white;
+}
+main {
+  display: flex; /* main을 flex 컨테이너로 설정 */
+  align-items: center; /* 세로 방향 가운데 정렬 */
+  flex-direction: column;
+  text-align: center;
+}
+.signin {
+  opacity: 0.5;
+  background-color: white;
+  height: 300px;
+  width: 500px;
+  border-radius: 2%;
+}
+
+.logo_btn {
+  background-color:transparent;
+  border: none;
+}
+.logo_btn > img {
+  width: 100px;
+  height: 100px;
+  margin: auto;
+}
+
+.login_form {
+  width: 80%; /* 폼의 너비를 조정하여 가운데 정렬 */
+  max-width: 400px; /* 폼의 최대 너비 설정 */
+  margin: 40px auto; /* 수직 가운데 정렬 */
+  background-color: white;
+  opacity: 1;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.signin_insert_id,
+.signin_insert_password {
+  width: calc(100% - 20px); /* 입력 필드의 너비를 조정하여 내부 여백에 맞춤 */
+  padding: 15px;
+  margin-bottom: 25px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.login_form button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.login_form p{
+  margin-left: 200px;
+}
+.signup{
+  opacity: 0.5;
+  background-color: white;
+  height: 450px;
+  width: 500px;
+  border-radius: 2%;
+}
+.signup_form {
+  width: 80%; /* 폼의 너비를 조정하여 가운데 정렬 */
+  max-width: 400px; /* 폼의 최대 너비 설정 */
+  margin: 40px auto; /* 수직 가운데 정렬 */
+  background-color: white;
+  opacity: 1;
+  border-radius: 10px;
+  font-size: 30px;
+  box-sizing: border-box;
+}
+
+.signup_insert_name,
+.signup_insert_id,
+.signup_insert_password {
+  width: calc(100% - 20px); /* 입력 필드의 너비를 조정하여 내부 여백에 맞춤 */
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.signup_form button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+

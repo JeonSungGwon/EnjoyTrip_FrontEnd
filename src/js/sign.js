@@ -1,4 +1,3 @@
-
 class SignPage {
   #app;
   #id;
@@ -18,10 +17,6 @@ class SignPage {
   }
 
   setUI() {
-    // javascript 코드에서 해야되는 모든 UI 처리
-    // 로그인, 회원가입 페이지 none 처리
-    // 버튼 누르면 이동하고...
-    // 로그인, 회원가입 섹션 가져오기
     const signinSection = this.#app.getElementById("signin");
     const signupSection = this.#app.getElementById("signup");
 
@@ -44,9 +39,7 @@ class SignPage {
     });
   }
 
-  signin() {
-    // 로그인 로직
-  }
+  signin() {}
 
   signup() {
     // 회원가입 로직

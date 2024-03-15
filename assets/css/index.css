@@ -16,8 +16,20 @@ body {
   font-family: "nanumsquare";
 }
 
-input,
+input [type="password"] {
+  font-family: "roboto";
+}
+
+input[type="text"],
 select,
 option {
   font-family: "nanumsquare";
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  cursor: pointer;
 }

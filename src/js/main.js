@@ -7,6 +7,8 @@ class MainPage {
   constructor(app, map) {
     this.#app = app;
     this.#map = map; // map 객체를 전달받음
+    this.stores = "";
+
     this.clusterer = new kakao.maps.MarkerClusterer({
       map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
       averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
@@ -14,16 +16,18 @@ class MainPage {
     });
 
     this.setUI();
+
+    this.createMyPageBtn();
     this.clickSearchBtn();
+    this.createCards();
   }
 
   setUI() {
     let token = localStorage.getItem("token");
     if (!token) {
       alert("사용자 정보가 없습니다! 로그인 페이지로 이동합니다.");
-      window.location.href = "../pages/signPage.html";
+      this.navigateTo("../pages/signPage.html");
     }
-    this.createMyPageBtn();
   }
 
   createMyPageBtn() {
@@ -36,17 +40,80 @@ class MainPage {
       <p>${username}</p>
     `;
     myBtnDiv.innerHTML = myBtn;
+
+    myBtnDiv.addEventListener("click", () => {
+      this.navigateTo("../pages/myPage.html");
+    });
   }
 
   clickSearchBtn() {
     let searchDiv = this.#app.getElementById("search");
+
     searchDiv.addEventListener("submit", (e) => {
       e.preventDefault();
-      console.log(e.target.value, "타겟");
       this.search();
-      this.createCards();
     });
   }
+
+  createCards() {
+    const cardsDiv = this.#app.getElementById("cards");
+    let html = "";
+
+    if (this.stores.length === 0) {
+      html = "<p>검색 결과가 없습니다😢</p>";
+    } else {
+      let storeLength = this.stores.length;
+      this.stores.forEach((store) => {
+        html += `
+          <div style="width: ${
+            storeLength < 5 ? 100 / storeLength - 2 : 18
+          }%; background-image: url(${
+          store.firstimage
+            ? store.firstimage
+            : "../../assets/images/noimage.svg"
+        });" id="card${store.contentid}" class="card" >
+            <div class="hover">
+              <p style="font-weight: bold; font-size: 18px">${
+                store.title.split("(")[0]
+              }</p>
+              <div style="display: flex;">
+                <span class="material-symbols-outlined">location_on</span>
+                <p style="font-size: 16px;">${
+                  store.addr1.split(" ")[0] + " " + store.addr1.split(" ")[1]
+                }</p>
+              </div>
+            </div>
+            <img src="../../assets/images/empty_star.svg" alt="star" id="star${
+              store.contentid
+            }" />
+          </div>
+        `;
+      });
+      cardsDiv.innerHTML = html;
+
+      this.setCardWidthHeight(cardsDiv);
+      this.starClick();
+    }
+  }
+
+  setCardWidthHeight(cardsDiv) {
+    const cards = cardsDiv.querySelectorAll(".card");
+    cards.forEach((card) => {
+      let cardWidth = card.clientWidth;
+      card.style.height = `${cardWidth}px`;
+    });
+  }
+
+  starClick() {
+    console.log(this.stores);
+    this.stores.map((store) => {
+      let starIcon = this.#app.getElementById(`star${store.contentid}`);
+      starIcon.addEventListener("click", () => {
+        starIcon.setAttribute("src", "../../assets/images/full_star.svg");
+      });
+    });
+  }
+
   // 검색 함수
   search = async () => {
     const keyword = document
@@ -151,57 +218,8 @@ class MainPage {
     }
   };
 
-  createCards() {
-    const cardsDiv = this.#app.getElementById("cards");
-    let html = "";
-
-    if (this.stores) {
-      // stores 배열이 정의된 경우에만 실행
-      this.stores.forEach((store) => {
-        console.log(store);
-        html += `
-          <div style="width: 20%; background-image: url(${
-            store.firstimage || store.firstimage2
-          }); background-size: cover;" id="card${
-          store.contentid
-        }" class="card" >
-            <div class="hover">
-              <p>${store.title.split("(")[0]}</p>
-              <p>${
-                store.addr1.split(" ")[0] + " " + store.addr1.split(" ")[1]
-              }</p>
-            </div>
-            <img src="../../assets/images/empty_star.svg" alt="star" id="star${
-              store.contentid
-            }" />
-          </div>
-        `;
-      });
-
-      cardsDiv.innerHTML = html; // 모든 카드 HTML을 한 번에 추가
-    } else {
-      cardsDiv.innerHTML = "검색 결과가 없습니다."; // 검색 결과가 없을 경우 메시지 출력
-    }
-
-    // 카드 스타일 설정
-    const cardWidth = cardsDiv.clientWidth / 5 - 10;
-    const cards = cardsDiv.querySelectorAll(".card");
-    cards.forEach((card) => {
-      card.style.width = `${cardWidth}px`;
-      card.style.height = `${cardWidth}px`;
-    });
-
-    this.starClick();
-  }
-
-  starClick() {
-    console.log(this.stores);
-    this.stores.map((store) => {
-      let starIcon = this.#app.getElementById(`star${store.contentid}`);
-      starIcon.addEventListener("click", () => {
-        starIcon.setAttribute("src", "../../assets/images/full_star.svg");
-      });
-    });
+  navigateTo(url) {
+    window.location.href = url;
   }
 }
 
@@ -326,5 +344,6 @@ function getDataFromAPI() {
     });
 }
 new MainPage(document, map);
+
 // 맵의 드래그 이벤트 등록
 //kakao.maps.event.addListener(map, "dragend", getDataFromAPI);

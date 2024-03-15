@@ -2,9 +2,16 @@ class MainPage {
   #app;
   #map;
   stores;
+  clusterer;
 
-  constructor(app) {
+  constructor(app, map) {
     this.#app = app;
+    this.#map = map; // map 객체를 전달받음
+    this.clusterer = new kakao.maps.MarkerClusterer({
+      map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+      averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+      minLevel: 5, // 클러스터 할 최소 지도 레벨
+    });
 
     this.setUI();
     this.clickSearchBtn();
@@ -57,11 +64,6 @@ class MainPage {
       alert("도시와 소분류를 선택하세요.");
       return;
     }
-    var clusterer = new kakao.maps.MarkerClusterer({
-      map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
-      averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-      minLevel: 5, // 클러스터 할 최소 지도 레벨
-    });
     // API 요청을 위한 URL 생성
     const apiUrl = `https://apis.data.go.kr/B551011/KorService1/searchKeyword1?MobileOS=ETC&MobileApp=%EC%97%AC%ED%96%89&_type=json&arrange=O&keyword=${encodeURIComponent(
       keyword
@@ -86,7 +88,7 @@ class MainPage {
         const markers = [];
 
         // 기존 마커 제거
-        clusterer.clear();
+        this.clusterer.clear();
 
         this.stores.forEach((store) => {
           const markerPosition = new kakao.maps.LatLng(
@@ -113,7 +115,7 @@ class MainPage {
         });
 
         // 클러스터에 마커 추가
-        clusterer.addMarkers(markers);
+        this.clusterer.addMarkers(markers);
 
         // 중심 좌표 변경
         const firstStore = this.stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
@@ -136,24 +138,19 @@ class MainPage {
   };
 
   createCards() {
-    alert(1);
-    console.log(this.stores, "asdasdasdsadasdsadsadadsssssssssssssssssssssssssssssssssss");
     const cardsDiv = this.#app.getElementById("cards");
     let html = "";
 
     if (this.stores) {
       // stores 배열이 정의된 경우에만 실행
       this.stores.forEach((store) => {
-        console.log(
-          store.firstimage,
-          "asdlkjasldkasjlkdasjdlkajskdsajkdlasjdlsajdlsajdklsajdasdlkasjdlaskdjaksdjaslkdjlkasdjlskadjaslkdjasldk"
-        );
         html += `
           <div style="width: 20%" id="card${store.contentid}" class="card" >
             <div>
-              <p>${store.title}</p>
-              <p>${store.addr1}</p>
-              <img src="${store.firstimage || store.firstimage2}" />
+              
+              <img src="${
+                store.firstimage || store.firstimage2
+              }" alt="Store Image" height="300px" width="300px" />
             </div>
             <img src="../../assets/images/empty_star.svg" alt="star" id="star${store.contentid}" />
           </div>
@@ -173,20 +170,19 @@ class MainPage {
       card.style.height = `${cardWidth}px`;
     });
 
-    this.starClick();
+    // this.starClick();
   }
 
-  starClick() {}
-  //   for (let i = 0; i < tripdata.length; i++) {
-  //     let starIcon = this.#app.getElementById(`star${tripdata[i].id}`);
+  // starClick() {
+  //   console.log(this.stores);
+  //   for (let i = 0; i < this.stores.length; i++) {
+  //     let starIcon = this.#app.getElementById(`star${this.stores[i].id}`);
   //     starIcon.addEventListener("click", () => {
   //       starIcon.setAttribute("src", "../../assets/images/full_star.svg");
   //     });
   //   }
   // }
 }
-
-new MainPage(document);
 
 // service.js
 document.addEventListener("DOMContentLoaded", function () {
@@ -254,12 +250,6 @@ var mapOption = {
 };
 var map = new kakao.maps.Map(mapContainer, mapOption);
 
-var clusterer = new kakao.maps.MarkerClusterer({
-  map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
-  averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-  minLevel: 5, // 클러스터 할 최소 지도 레벨
-});
-
 // 카카오 맵의 중심 좌표가 변경될 때마다 데이터를 가져오는 함수
 function getDataFromAPI() {
   var center = map.getCenter(); // 맵의 중심 좌표를 가져옴
@@ -304,6 +294,6 @@ function getDataFromAPI() {
       clusterer.addMarkers(markers); // 클러스터에 마커 추가
     });
 }
-
+new MainPage(document, map);
 // 맵의 드래그 이벤트 등록
 //kakao.maps.event.addListener(map, "dragend", getDataFromAPI);

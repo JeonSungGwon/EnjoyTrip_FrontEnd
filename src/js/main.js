@@ -36,6 +36,17 @@ class MainPage {
     `;
 
     searchBarDiv.innerHTML = searchBar;
+
+    // 검색 아이콘 누르면 검색하기
+    let searchBtn = searchBarDiv.getElementsByTagName("img")[0];
+    searchBtn.addEventListener("click", () => {
+      this.search();
+    });
+  }
+
+  // 검색 함수
+  search() {
+    console.log("검색 요청 합니다.");
   }
 
   createCards() {

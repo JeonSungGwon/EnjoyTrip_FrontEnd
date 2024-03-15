@@ -1,8 +1,7 @@
-import { tripdata } from "../../const/tripData.js";
-
 class MainPage {
   #app;
   #map;
+  stores;
 
   constructor(app) {
     this.#app = app;
@@ -13,7 +12,6 @@ class MainPage {
 
   setUI() {
     this.createMyPageBtn();
-    this.createCards();
   }
 
   createMyPageBtn() {
@@ -34,6 +32,7 @@ class MainPage {
       e.preventDefault();
       console.log(e.target.value, "타겟");
       this.search();
+      this.createCards();
     });
   }
   // 검색 함수
@@ -77,13 +76,14 @@ class MainPage {
         data.response.body.items.item
       ) {
         // 검색 결과가 있을 경우 마커 표시
-        const stores = data.response.body.items.item;
+        this.stores = data.response.body.items.item;
+        this.createCards(this.stores);
         const markers = [];
 
         // 기존 마커 제거
         clusterer.clear();
 
-        stores.forEach((store) => {
+        this.stores.forEach((store) => {
           const markerPosition = new kakao.maps.LatLng(
             parseFloat(store.mapy),
             parseFloat(store.mapx)
@@ -111,7 +111,7 @@ class MainPage {
         clusterer.addMarkers(markers);
 
         // 중심 좌표 변경
-        const firstStore = stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
+        const firstStore = this.stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
         console.log(firstStore.mapx, firstStore.mapy + "asdasdasdas");
         const center = new kakao.maps.LatLng(
           parseFloat(firstStore.mapy),
@@ -121,7 +121,7 @@ class MainPage {
         map.setCenter(center);
 
         // 콘솔에 데이터 출력
-        console.log("검색 결과:", stores);
+        console.log("검색 결과:", this.stores);
       } else {
         console.log("검색 결과가 없습니다.");
       }
@@ -131,41 +131,54 @@ class MainPage {
   };
 
   createCards() {
+    alert(1);
+    console.log(this.stores, "asdasdasdsadasdsadsadadsssssssssssssssssssssssssssssssssss");
     const cardsDiv = this.#app.getElementById("cards");
     let html = "";
 
-    tripdata.map((data) => {
-      html = `
-        <div style="width: 20%" id="card${data.id}" class="card" >
-          <div class="hover">
-            <p>${data.title}</p>
-            <p>${data.location}</p>
+    if (this.stores) {
+      // stores 배열이 정의된 경우에만 실행
+      this.stores.forEach((store) => {
+        console.log(
+          store.firstimage,
+          "asdlkjasldkasjlkdasjdlkajskdsajkdlasjdlsajdlsajdklsajdasdlkasjdlaskdjaksdjaslkdjlkasdjlskadjaslkdjasldk"
+        );
+        html += `
+          <div style="width: 20%" id="card${store.contentid}" class="card" >
+            <div>
+              <p>${store.title}</p>
+              <p>${store.addr1}</p>
+              <img src="${store.firstimage || store.firstimage2}" />
+            </div>
+            <img src="../../assets/images/empty_star.svg" alt="star" id="star${store.contentid}" />
           </div>
-          <img src="../../assets/images/empty_star.svg" alt="star" id="star${data.id}" />
-        </div>
-      `;
+        `;
+      });
 
-      cardsDiv.innerHTML += html;
+      cardsDiv.innerHTML = html; // 모든 카드 HTML을 한 번에 추가
+    } else {
+      cardsDiv.innerHTML = "검색 결과가 없습니다."; // 검색 결과가 없을 경우 메시지 출력
+    }
 
-      let curCard = document.getElementById(`card${data.id}`);
-      curCard.setAttribute(
-        "style",
-        `width: ${cardsDiv.clientWidth / 5 - 10}px; height: ${cardsDiv.clientWidth / 5 - 10}px; 
-        background-image: url(${data.imageUrl}); background-size: cover`
-      );
+    // 카드 스타일 설정
+    const cardWidth = cardsDiv.clientWidth / 5 - 10;
+    const cards = cardsDiv.querySelectorAll(".card");
+    cards.forEach((card) => {
+      card.style.width = `${cardWidth}px`;
+      card.style.height = `${cardWidth}px`;
     });
 
     this.starClick();
   }
 
-  starClick() {
-    for (let i = 0; i < tripdata.length; i++) {
-      let starIcon = this.#app.getElementById(`star${tripdata[i].id}`);
-      starIcon.addEventListener("click", () => {
-        starIcon.setAttribute("src", "../../assets/images/full_star.svg");
-      });
-    }
-  }
+  starClick() {}
+  //   for (let i = 0; i < tripdata.length; i++) {
+  //     let starIcon = this.#app.getElementById(`star${tripdata[i].id}`);
+  //     starIcon.addEventListener("click", () => {
+  //       starIcon.setAttribute("src", "../../assets/images/full_star.svg");
+  //     });
+  //   }
+  // }
 }
 
 new MainPage(document);
@@ -256,12 +269,12 @@ function getDataFromAPI() {
     .then((res) => res.json())
     .then((myJson) => {
       var markers = [];
-      const stores = myJson.response.body.items.item; // 주어진 데이터에서 item 배열 추출
+      this.stores = myJson.response.body.items.item; // 주어진 데이터에서 item 배열 추출
 
       console.log(JSON.stringify(myJson, null, 1)); // JSON 데이터 출력
 
-      for (var i = 0; i < stores.length; i++) {
-        var store = stores[i]; // 각 매장 정보
+      for (var i = 0; i < this.stores.length; i++) {
+        var store = this.stores[i]; // 각 매장 정보
         var markerPosition = new kakao.maps.LatLng(parseFloat(store.mapy), parseFloat(store.mapx)); // 위도와 경도
 
         var marker = new kakao.maps.Marker({
@@ -288,4 +301,4 @@ function getDataFromAPI() {
 }
 
 // 맵의 드래그 이벤트 등록
-kakao.maps.event.addListener(map, "dragend", getDataFromAPI);
+//kakao.maps.event.addListener(map, "dragend", getDataFromAPI);

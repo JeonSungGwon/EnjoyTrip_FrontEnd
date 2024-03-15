@@ -58,10 +58,18 @@ main section:first-child {
   margin: auto;
   justify-content: space-between;
   align-items: center;
+  font-size: 18px;
+}
+
+.search select {
+  padding: 8px 12px;
+  outline: none;
+  font-size: 16px;
+  margin: 0 10px;
 }
 
 .searchbar {
-  width: 70%;
+  width: 40%;
   border: 1px solid #aaaaaa;
   border-radius: 30px;
   display: flex;

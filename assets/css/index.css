@@ -16,6 +16,8 @@ body {
   font-family: "nanumsquare";
 }
 
-input {
+input,
+select,
+option {
   font-family: "nanumsquare";
 }

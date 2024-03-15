@@ -7,11 +7,11 @@ class MainPage {
     this.#app = app;
 
     this.setUI();
+    this.clickSearchBtn();
   }
 
   setUI() {
     this.createMyPageBtn();
-    this.createSearchBar();
     this.createCards();
   }
 
@@ -27,18 +27,8 @@ class MainPage {
     myBtnDiv.innerHTML = myBtn;
   }
 
-  createSearchBar() {
-    const searchBarDiv = this.#app.getElementById("searchBar");
-
-    const searchBar = `
-      <input class="search-input" placeholder="여행지 이름, 위치 등 검색어를 입력해 주세요." />
-      <img height="30px" width="30px" src="../../assets/images/search.svg" />
-    `;
-
-    searchBarDiv.innerHTML = searchBar;
-
-    // 검색 아이콘 누르면 검색하기
-    let searchBtn = searchBarDiv.getElementsByTagName("img")[0];
+  clickSearchBtn() {
+    let searchBtn = this.#app.getElementById("searchBar").getElementsByTagName("img")[0];
     searchBtn.addEventListener("click", () => {
       this.search();
     });

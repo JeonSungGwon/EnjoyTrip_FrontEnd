@@ -1,22 +1,118 @@
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  font-family: "nanumsquare";
-}
-
 /* header */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100vw;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
+  background-image: url("../images/background.png");
+  background-size: cover;
+  background-position-y: center;
+  color: #fff;
+  z-index: 10;
+}
+
+header img {
+  margin: 5px 20px;
 }
 
 .my-btn {
   display: flex;
+  justify-content: right;
+  margin-right: 20px;
+  align-items: center;
+  font-size: 24px;
+}
+
+.my-btn p {
+  margin: 0;
+}
+
+.my-btn img {
+  margin: 0;
+}
+
+/* 본문 */
+main {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+/* 검색창 부분 */
+.search {
+  width: 100%;
+  height: 10%;
+  display: flex;
+}
+
+.searchbar {
+  width: 70%;
+  height: 50%;
+  margin: auto;
+  border: 1px solid #aaaaaa;
+  border-radius: 30px;
+  padding: 20px;
+  font-size: 20px;
+}
+
+.search img {
+  position: relative;
+  right: 18%;
+  top: 30%;
+}
+
+/* 지도 부분 */
+.map {
+  width: 80%;
+  height: 500px;
+  border: 1px solid #aaa;
+  margin: auto;
+}
+
+/* 여행지 리스트 */
+.result {
+  width: 80%;
+  height: 100%;
+  margin: auto;
+  margin-bottom: 50px;
+}
+
+.cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 1vw;
+}
+
+.cards div {
+  width: 20%;
+  border-radius: 15px;
+}
+
+.cards div img:first-child {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+}
+
+.cards div img:last-child {
+  position: relative;
+  top: -14vw;
+  left: 10px;
+}
+
+/* footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: #738fbb;
+  z-index: 10;
 }

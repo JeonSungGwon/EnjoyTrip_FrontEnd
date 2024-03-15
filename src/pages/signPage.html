@@ -24,11 +24,18 @@
           아무런 걱정없이 <br />여행을 떠나보세요.
         </p>
         <div>
-          <form class="login_form">
-            <input class="signin_insert_id" type="text" placeholder="ID" />
-            <input class="signin_insert_password" type="password" placeholder="PWD" />
-            <button type="button">로그인</button>
-            <p>회원이 아니신가요? <a id="sign_on">회원가입</a></p>
+          <form class="login_form" id="signinForm">
+            <input id="id" class="signin_insert_id" type="email" placeholder="아이디" />
+            <input
+              id="password"
+              class="signin_insert_password"
+              type="password"
+              placeholder="비밀번호"
+            />
+            <button type="submit">로그인</button>
+            <p>
+              회원이 아니신가요? <a id="sign_on" style="text-decoration: underline">회원가입</a>
+            </p>
           </form>
         </div>
       </section>
@@ -36,11 +43,16 @@
       <section id="signup" style="display: none" class="signup">
         <div>
           <p>회원가입</p>
-          <form class="signup_form">
-            <input class="signup_insert_name" type="text" placeholder="이름" />
-            <input class="signup_insert_id" type="text" placeholder="아이디" />
-            <input class="signup_insert_password" type="password" placeholder="비밀번호" />
-            <button type="button" id="sign_btn">회원가입</button>
+          <form class="signup_form" id="signupForm">
+            <input id="name" class="signup_insert_name" type="text" placeholder="이름" />
+            <input id="id" class="signup_insert_id" type="text" placeholder="아이디" />
+            <input
+              id="password"
+              class="signup_insert_password"
+              type="password"
+              placeholder="비밀번호"
+            />
+            <button type="submit" id="sign_btn">회원가입</button>
           </form>
         </div>
       </section>

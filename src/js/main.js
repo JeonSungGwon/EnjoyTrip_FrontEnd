@@ -11,6 +11,11 @@ class MainPage {
   }
 
   setUI() {
+    let token = localStorage.getItem("token");
+    if (!token) {
+      alert("사용자 정보가 없습니다! 로그인 페이지로 이동합니다.");
+      window.location.href = "../pages/signPage.html";
+    }
     this.createMyPageBtn();
   }
 

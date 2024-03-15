@@ -130,10 +130,11 @@ main section:first-child {
 
 .cards .card:hover .hover {
   display: flex;
+  padding: 2rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .hover p {

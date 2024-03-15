@@ -49,7 +49,9 @@ class MainPage {
   }
   // 검색 함수
   search = async () => {
-    const keyword = document.getElementById("searchBar").getElementsByTagName("input")[0].value;
+    const keyword = document
+      .getElementById("searchBar")
+      .getElementsByTagName("input")[0].value;
     const citySelect = document.getElementById("city");
     const subLocationSelect = document.getElementById("subLocation");
 
@@ -57,7 +59,12 @@ class MainPage {
     const selectedCity = citySelect.value;
 
     const selectedSubLocation = subLocationSelect.value;
-    console.log(selectedCity, selectedSubLocation, keyword, "asddddddddddddddddddddddddddddd");
+    console.log(
+      selectedCity,
+      selectedSubLocation,
+      keyword,
+      "asddddddddddddddddddddddddddddd"
+    );
 
     // 도시와 소분류가 선택되지 않았을 경우 알림 후 종료
     if (!selectedCity || !selectedSubLocation) {
@@ -101,7 +108,10 @@ class MainPage {
           });
 
           const infowindow = new kakao.maps.InfoWindow({
-            content: '<div style="padding:5px;font-size:12px;">' + store.title + "</div>",
+            content:
+              '<div style="padding:5px;font-size:12px;">' +
+              store.title +
+              "</div>",
           });
 
           markers.push(marker);
@@ -111,7 +121,11 @@ class MainPage {
             "mouseover",
             makeOverListener(map, marker, infowindow)
           );
-          kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
+          kakao.maps.event.addListener(
+            marker,
+            "mouseout",
+            makeOutListener(infowindow)
+          );
         });
 
         // 클러스터에 마커 추가
@@ -144,15 +158,22 @@ class MainPage {
     if (this.stores) {
       // stores 배열이 정의된 경우에만 실행
       this.stores.forEach((store) => {
+        console.log(store);
         html += `
-          <div style="width: 20%" id="card${store.contentid}" class="card" >
-            <div>
-              
-              <img src="${
-                store.firstimage || store.firstimage2
-              }" alt="Store Image" height="300px" width="300px" />
+          <div style="width: 20%; background-image: url(${
+            store.firstimage || store.firstimage2
+          }); background-size: cover;" id="card${
+          store.contentid
+        }" class="card" >
+            <div class="hover">
+              <p>${store.title.split("(")[0]}</p>
+              <p>${
+                store.addr1.split(" ")[0] + " " + store.addr1.split(" ")[1]
+              }</p>
             </div>
-            <img src="../../assets/images/empty_star.svg" alt="star" id="star${store.contentid}" />
+            <img src="../../assets/images/empty_star.svg" alt="star" id="star${
+              store.contentid
+            }" />
           </div>
         `;
       });
@@ -170,18 +191,18 @@ class MainPage {
       card.style.height = `${cardWidth}px`;
     });
 
-    // this.starClick();
+    this.starClick();
   }
 
-  // starClick() {
-  //   console.log(this.stores);
-  //   for (let i = 0; i < this.stores.length; i++) {
-  //     let starIcon = this.#app.getElementById(`star${this.stores[i].id}`);
-  //     starIcon.addEventListener("click", () => {
-  //       starIcon.setAttribute("src", "../../assets/images/full_star.svg");
-  //     });
-  //   }
-  // }
+  starClick() {
+    console.log(this.stores);
+    this.stores.map((store) => {
+      let starIcon = this.#app.getElementById(`star${store.contentid}`);
+      starIcon.addEventListener("click", () => {
+        starIcon.setAttribute("src", "../../assets/images/full_star.svg");
+      });
+    });
+  }
 }
 
 // service.js
@@ -270,7 +291,10 @@ function getDataFromAPI() {
 
       for (var i = 0; i < this.stores.length; i++) {
         var store = this.stores[i]; // 각 매장 정보
-        var markerPosition = new kakao.maps.LatLng(parseFloat(store.mapy), parseFloat(store.mapx)); // 위도와 경도
+        var markerPosition = new kakao.maps.LatLng(
+          parseFloat(store.mapy),
+          parseFloat(store.mapx)
+        ); // 위도와 경도
 
         var marker = new kakao.maps.Marker({
           position: markerPosition,
@@ -278,7 +302,10 @@ function getDataFromAPI() {
         });
 
         var infowindow = new kakao.maps.InfoWindow({
-          content: '<div style="padding:5px;font-size:12px;">' + store.title + "</div>", // 정보창에 표시할 내용
+          content:
+            '<div style="padding:5px;font-size:12px;">' +
+            store.title +
+            "</div>", // 정보창에 표시할 내용
         });
 
         markers.push(marker);
@@ -288,7 +315,11 @@ function getDataFromAPI() {
           "mouseover",
           makeOverListener(map, marker, infowindow)
         );
-        kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
+        kakao.maps.event.addListener(
+          marker,
+          "mouseout",
+          makeOutListener(infowindow)
+        );
       }
 
       clusterer.addMarkers(markers); // 클러스터에 마커 추가

@@ -25,10 +25,10 @@
 
     <main>
       <section>
-        <div class="search" id="search">
+        <form class="search" id="search">
           <div class="selects" id="selects">
             <span>어디로 여행 가시나요?</span>
-            <select id="city">
+            <select name="city" id="city">
               <option value="">시, 도를 선택하세요.</option>
               <option value="1">서울</option>
               <option value="2">인천</option>
@@ -55,12 +55,14 @@
           </div>
           <div id="searchBar" class="searchbar">
             <input
+              name="keyword"
               class="search-input"
               placeholder="여행지 이름, 위치 등 검색어를 입력해 주세요."
             />
+            <button type="submit">검색</button>
             <img height="30px" width="30px" src="../../assets/images/search.svg" />
           </div>
-        </div>
+        </form>
       </section>
 
       <section id="map" class="map"></section>

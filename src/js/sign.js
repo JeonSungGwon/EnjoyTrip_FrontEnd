@@ -1,3 +1,4 @@
+
 class SignPage {
   #app;
   #id;

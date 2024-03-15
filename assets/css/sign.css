@@ -12,28 +12,29 @@ body {
 }
 body {
   background-image: url(/assets/images/background.png);
-  background-size: cover; 
-  
+  background-size: cover;
 }
 .title_text {
-  color : white;
+  color: white;
+  font-size: 40px;
 }
 main {
   display: flex; /* main을 flex 컨테이너로 설정 */
   align-items: center; /* 세로 방향 가운데 정렬 */
   flex-direction: column;
   text-align: center;
+  justify-content: center;
 }
 .signin {
   opacity: 0.5;
   background-color: white;
-  height: 300px;
-  width: 500px;
+  height: 500px;
+  width: 700px;
   border-radius: 2%;
 }
 
 .logo_btn {
-  background-color:transparent;
+  background-color: transparent;
   border: none;
 }
 .logo_btn > img {
@@ -44,8 +45,8 @@ main {
 
 .login_form {
   width: 80%; /* 폼의 너비를 조정하여 가운데 정렬 */
-  max-width: 400px; /* 폼의 최대 너비 설정 */
-  margin: 40px auto; /* 수직 가운데 정렬 */
+  max-width: 600px; /* 폼의 최대 너비 설정 */
+  margin: 120px auto; /* 수직 가운데 정렬 */
   background-color: white;
   opacity: 1;
   border-radius: 10px;
@@ -55,8 +56,8 @@ main {
 .signin_insert_id,
 .signin_insert_password {
   width: calc(100% - 20px); /* 입력 필드의 너비를 조정하여 내부 여백에 맞춤 */
-  padding: 15px;
-  margin-bottom: 25px;
+  padding: 30px;
+  margin-bottom: 40px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
@@ -64,17 +65,19 @@ main {
 
 .login_form button {
   width: 100%;
-  padding: 10px;
+  padding: 20px;
   border: none;
   background-color: #007bff;
   color: white;
   border-radius: 5px;
   cursor: pointer;
 }
-.login_form p{
-  margin-left: 200px;
+.login_form p {
+  font-size: 20px;
+  margin-left: 230px;
 }
-.signup{
+.signup {
+  margin-top: 30px;
   opacity: 0.5;
   background-color: white;
   height: 450px;
@@ -112,4 +115,3 @@ main {
   border-radius: 5px;
   cursor: pointer;
 }
-

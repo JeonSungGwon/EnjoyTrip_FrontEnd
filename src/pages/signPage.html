@@ -12,12 +12,12 @@
   <body>
     <header>
       <button type="button" class="logo_btn">
-        <img src="/assets/images/logo.svg" alt="대체 텍스트" onclick="" >
+        <img src="/assets/images/logo.svg" alt="대체 텍스트" onclick="" />
       </button>
     </header>
 
     <main>
-      <h1 class="title_text">
+      <h1 class="title_text" id="title_text" style="display: block;">
         바쁘고 지친 하루 하루, <br />
         아무런 걱정없이 <br />여행을 떠나보세요.
       </h1>
@@ -29,7 +29,7 @@
           <input class="signin_insert_id" type="text" placeholder="아이디" />
           <input class="signin_insert_password" type="password" placeholder="비밀번호" />
           <button type="button">로그인</button>
-          <p>회원이 아니신가요? <a>회원가입</a></p>
+          <p>회원이 아니신가요? <a id="sign_on">회원가입</a></p>
         </div>
       </section>
 
@@ -39,7 +39,7 @@
           <input class="signup_insert_name" type="text" placeholder="이름" />
           <input class="signup_insert_id" type="text" placeholder="아이디" />
           <input class="signup_insert_password" type="password" placeholder="비밀번호" />
-          <button type="button">회원가입</button>
+          <button type="button" id="sign_btn">회원가입</button>
         </div>
         <!-- name 입력 받는 input 태그, id 입력 받는 input 태그, password 입력 받는 input 태그, button(회원가입 버튼)-->
       </section>

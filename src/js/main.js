@@ -1,4 +1,10 @@
-import { Header, Modal } from "./component.js";
+import {
+  Card,
+  Footer,
+  Header,
+  Modal,
+  setCardWidthHeight,
+} from "./component.js";
 import { navigateTo, requestData, searchAPI } from "./service.js";
 import {
   initializeKakaoMap,
@@ -48,6 +54,7 @@ class MainPage {
     this.#profileImage = "../../assets/images/user_white.svg";
 
     Header(this.#profileImage, this.#username);
+    Footer();
 
     this.createCards();
   }
@@ -75,58 +82,32 @@ class MainPage {
 
       const cardsDiv = this.#app.getElementById("cards");
       this.stores.forEach((store) => {
+        html += Card(
+          store.contentid,
+          store.firstimage
+            ? store.firstimage
+            : "../../assets/images/noimage.svg",
+          store.title.split("(")[0],
+          store.addr1.split(" ")[0] + " " + store.addr1.split(" ")[1],
+          "18%"
+        );
         html += `
-          <div style="width: 18%; background-image: url(${
-            store.firstimage
-              ? store.firstimage
-              : "../../assets/images/noimage.svg"
-          });" id="card${store.contentid}" class="card" >
-            <div class="hover">
-              <p style="font-weight: bold; font-size: 18px">${
-                store.title.split("(")[0]
-              }</p>
-              <div style="display: flex;">
-                <span class="material-symbols-outlined">location_on</span>
-                <p style="font-size: 16px;">${
-                  store.addr1.split(" ")[0] + " " + store.addr1.split(" ")[1]
-                }</p>
-              </div>
-            </div>
-            <img src="../../assets/images/empty_star.svg" alt="star" id="star${
-              store.contentid
-            }" />
-          </div>
+            <img src="../../assets/images/empty_star.svg" alt="star" id="star${store.contentid}" />
         `;
+        html += "</div>";
       });
       cardsDiv.innerHTML = html;
 
-      this.setCardWidthHeight(cardsDiv);
+      setCardWidthHeight(
+        cardsDiv,
+        ".card",
+        // 지도 이벤트
+        true
+      );
+
       this.clickStar();
       this.clickCard();
     }
-  }
-
-  setCardWidthHeight(cardsDiv) {
-    const cards = cardsDiv.querySelectorAll(".card");
-    cards.forEach((card) => {
-      let cardWidth = card.clientWidth;
-      card.style.height = `${cardWidth}px`;
-
-      // 카드 클릭 이벤트 추가
-      card.addEventListener("click", (event) => {
-        const cardId = event.currentTarget.id.replace("card", "");
-        const clickedStore = this.stores.find(
-          (store) => store.contentid === cardId
-        );
-        if (clickedStore) {
-          const position = new kakao.maps.LatLng(
-            parseFloat(clickedStore.mapy),
-            parseFloat(clickedStore.mapx)
-          );
-          map.setCenter(position);
-        }
-      });
-    });
   }
 
   clickCard() {
@@ -352,3 +333,46 @@ var map = initializeKakaoMap();
 var markers = [];
 
 new MainPage(document, map, markers);
+document.addEventListener("DOMContentLoaded", function () {
+  const citySelect = document.getElementById("city");
+
+  // API 호출 및 데이터 가져오는 함수
+  async function fetchSubLocations(areaCode) {
+    const apiUrl = `https://apis.data.go.kr/B551011/KorService1/areaCode1?numOfRows=100&MobileOS=ETC&MobileApp=%EC%97%AC%ED%96%89&areaCode=${areaCode}&_type=json&serviceKey=NHmBKryxoTzpzOQijbBqpbyIoX6HsTNr19mTO8DTHDk0VigM%2B2%2B4GDcFCg%2FBAzD1i3NTHd1H44D0gjLo5Elq%2Fw%3D%3D`;
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      return data.response.body.items.item;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return [];
+    }
+  }
+
+  // 셀렉트 박스 업데이트 함수
+  async function updateSubLocationOptions() {
+    const selectedCity = citySelect.value;
+    const subLocationSelect = document.getElementById("subLocation");
+    console.log(subLocationSelect);
+
+    // 이전에 선택된 구 제거
+    subLocationSelect.innerHTML = '<option value="">소분류</option>';
+
+    if (selectedCity) {
+      const subLocations = await fetchSubLocations(selectedCity);
+      subLocations.forEach((location) => {
+        // 각 구를 옵션으로 추가
+        const option = document.createElement("option");
+        option.value = location.code;
+        option.textContent = location.name;
+        subLocationSelect.appendChild(option);
+      });
+    }
+  }
+
+  // 도시 선택 변경시 이벤트 리스너
+  citySelect.addEventListener("change", updateSubLocationOptions);
+
+  // 초기화
+  updateSubLocationOptions();
+});

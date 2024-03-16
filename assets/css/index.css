@@ -77,6 +77,46 @@ header > img {
   margin: 0;
 }
 
+/* 카드 */
+.card {
+  position: relative;
+  border-radius: 15px;
+  background-size: cover;
+  margin-bottom: 50px;
+  border: #bbb solid 0.5px;
+}
+
+.hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 15px;
+  display: none;
+}
+
+.card:hover .hover {
+  display: flex;
+  padding: 2rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.hover p {
+  margin: 5px 0;
+}
+
+.card img {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
 /* Modal */
 .modal-background {
   position: fixed;
@@ -114,4 +154,22 @@ header > img {
 
 .modal .material-symbols-outlined {
   cursor: pointer;
+}
+
+/* footer */
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #738fbb;
+  z-index: 10;
+}
+
+footer p {
+  color: #fff;
+  margin: 16px 20px;
+  font-size: 20px;
 }

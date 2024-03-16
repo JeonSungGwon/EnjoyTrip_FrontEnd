@@ -4,18 +4,14 @@ body {
   overflow: hidden;
 }
 
-/* 헤더(로고) */
-header {
-  height: 10%;
-}
-
+/* (로고) */
 .logo_btn {
   background-color: transparent;
   border: none;
   width: 150px;
   padding: 0;
-  margin-top: 30px;
-  margin-left: 30px;
+  margin-top: 15px;
+  margin-left: 15px;
 }
 
 .logo_btn > img {
@@ -78,7 +74,7 @@ input {
 .title_text {
   color: white;
   font-size: 40px;
-  margin: 60px 0;
+  margin: 40px 0;
 }
 
 form p {

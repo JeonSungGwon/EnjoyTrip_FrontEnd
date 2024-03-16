@@ -1,3 +1,5 @@
+// 지도 API 외에 공통으로 사용하는 함수들
+
 export function navigateTo(page) {
   window.location.href = page;
 }

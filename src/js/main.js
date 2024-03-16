@@ -1,17 +1,21 @@
+import { Header } from "./component.js";
 import { navigateTo, requestData, searchAPI } from "./service.js";
 
 class MainPage {
   #app;
   #map;
+  #profileImage;
   #username;
   stores;
   markers;
   clusterer;
 
   constructor(app, map, markers) {
+    // 변수 초기화
     this.#app = app;
     this.#map = map; // map 객체를 전달받음
     this.#username = "";
+    this.#profileImage = "";
     this.stores = "";
     this.markers = markers;
     this.clusterer = new kakao.maps.MarkerClusterer({
@@ -20,11 +24,10 @@ class MainPage {
       minLevel: 5, // 클러스터 할 최소 지도 레벨
     });
 
+    // 화면
     this.setUI();
-
-    this.createMyPageBtn();
+    // event
     this.clickSearchBtn();
-    this.createCards();
   }
 
   setUI() {
@@ -33,24 +36,13 @@ class MainPage {
       alert("사용자 정보가 없습니다! 로그인 페이지로 이동합니다.");
       navigateTo("../pages/signPage.html");
     }
-  }
 
-  createMyPageBtn() {
-    const myBtnDiv = this.#app.getElementById("myBtn");
+    this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
+    this.#profileImage = "../../assets/images/user_white.svg";
 
-    this.username = JSON.parse(localStorage.getItem("userInfo")).name;
-    let profileImage = "../../assets/images/user_white.svg";
-    const myBtn = `
-      <img src=${profileImage} />
-      <p>${this.username}</p>
-    `;
-    myBtnDiv.innerHTML = myBtn;
+    Header(this.#profileImage, this.#username);
 
-    myBtnDiv.addEventListener("click", () => {
-      navigateTo("../pages/myPage.html");
-    });
-
-    
+    this.createCards();
   }
 
   clickSearchBtn() {
@@ -110,36 +102,51 @@ class MainPage {
       card.style.height = `${cardWidth}px`;
 
       // 카드 클릭 이벤트 추가
-    card.addEventListener("click", (event) => {
-      const cardId = event.currentTarget.id.replace("card", "");
-      const clickedStore = this.stores.find(store => store.contentid === cardId);
-      if (clickedStore) {
-          const position = new kakao.maps.LatLng(parseFloat(clickedStore.mapy), parseFloat(clickedStore.mapx));
+      card.addEventListener("click", (event) => {
+        const cardId = event.currentTarget.id.replace("card", "");
+        const clickedStore = this.stores.find(
+          (store) => store.contentid === cardId
+        );
+        if (clickedStore) {
+          const position = new kakao.maps.LatLng(
+            parseFloat(clickedStore.mapy),
+            parseFloat(clickedStore.mapx)
+          );
           map.setCenter(position);
-      }
-    });
+        }
+      });
     });
   }
 
   clickStar() {
     for (let i = 0; i < this.stores.length; i++) {
-      let starIcon = this.#app.getElementById(`star${this.stores[i].contentid}`);
+      let starIcon = this.#app.getElementById(
+        `star${this.stores[i].contentid}`
+      );
       starIcon.addEventListener("click", () => {
         const storeId = event.target.id.replace("star", "");
-        const clickedStore = this.stores.find(store => store.contentid === storeId);
-  
+        const clickedStore = this.stores.find(
+          (store) => store.contentid === storeId
+        );
+
         // 이미지 교체
-        if (starIcon.getAttribute("src") === "../../assets/images/full_star.svg") {
+        if (
+          starIcon.getAttribute("src") === "../../assets/images/full_star.svg"
+        ) {
           starIcon.setAttribute("src", "../../assets/images/empty_star.svg");
-          
-          const clickedMarker = this.markers.find(marker => marker.getTitle() === clickedStore.title);
-          
+
+          const clickedMarker = this.markers.find(
+            (marker) => marker.getTitle() === clickedStore.title
+          );
+
           console.log(clickedMarker);
           if (clickedMarker !== undefined) {
             // 기존의 마커를 제거합니다.
             this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
-            this.markers = this.markers.filter(marker => marker !== clickedMarker);
-            
+            this.markers = this.markers.filter(
+              (marker) => marker !== clickedMarker
+            );
+
             // 새로운 마커를 생성하여 클러스터에 추가합니다.
             const markerPosition = new kakao.maps.LatLng(
               parseFloat(this.stores[i].mapy),
@@ -147,7 +154,7 @@ class MainPage {
             );
             const newMarker = new kakao.maps.Marker({
               position: markerPosition,
-              title: this.stores[i].title
+              title: this.stores[i].title,
             });
             this.markers.push(newMarker);
             this.clusterer.addMarker(newMarker);
@@ -155,25 +162,32 @@ class MainPage {
         } else {
           starIcon.setAttribute("src", "../../assets/images/full_star.svg");
           // 클릭된 스타에 해당하는 마커를 찾습니다.
-          const clickedMarker = this.markers.find(marker => marker.getTitle() === clickedStore.title);
-          
+          const clickedMarker = this.markers.find(
+            (marker) => marker.getTitle() === clickedStore.title
+          );
+
           console.log(clickedMarker);
           if (clickedMarker !== undefined) {
-            
             // 기존의 마커를 제거합니다.
             this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
-            this.markers = this.markers.filter(marker => marker !== clickedMarker);
-            
+            this.markers = this.markers.filter(
+              (marker) => marker !== clickedMarker
+            );
+
             // 새로운 마커를 생성하여 클러스터에 추가합니다.
             const markerPosition = new kakao.maps.LatLng(
               parseFloat(this.stores[i].mapy),
               parseFloat(this.stores[i].mapx)
             );
-            console.log(markerPosition,"adkasdkajdkasjdkasd");
+            console.log(markerPosition, "adkasdkajdkasjdkasd");
             const newMarker = new kakao.maps.Marker({
               position: markerPosition,
               title: this.stores[i].title,
-              image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(25, 40), {offset: new kakao.maps.Point(13, 37)})
+              image: new kakao.maps.MarkerImage(
+                "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
+                new kakao.maps.Size(30, 30),
+                { offset: new kakao.maps.Point(15, 25) }
+              ),
             });
             this.markers.push(newMarker);
             this.clusterer.addMarker(newMarker);
@@ -228,7 +242,7 @@ class MainPage {
               "</div>",
           });
 
-         this.markers.push(marker);
+          this.markers.push(marker);
 
           kakao.maps.event.addListener(
             marker,
@@ -247,7 +261,7 @@ class MainPage {
 
         // 중심 좌표 변경
         const firstStore = this.stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
-        
+
         const center = new kakao.maps.LatLng(
           parseFloat(firstStore.mapy),
           parseFloat(firstStore.mapx)

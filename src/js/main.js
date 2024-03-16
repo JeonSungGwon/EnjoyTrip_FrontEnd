@@ -184,9 +184,9 @@ class MainPage {
               position: markerPosition,
               title: this.stores[i].title,
               image: new kakao.maps.MarkerImage(
-                "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-                new kakao.maps.Size(30, 30),
-                { offset: new kakao.maps.Point(15, 25) }
+                "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+                new kakao.maps.Size(25, 40),
+                { offset: new kakao.maps.Point(13, 37) }
               ),
             });
             this.markers.push(newMarker);

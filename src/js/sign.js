@@ -84,7 +84,7 @@ class SignPage {
     navigateTo("../pages/mainPage.html");
   }
 
-  successSignup() {
+  successSignup(userInfo) {
     localStorage.setItem("userInfo", JSON.stringify(userInfo));
     alert("회원 가입이 완료 되었습니다!");
     navigateTo("../pages/signPage.html");

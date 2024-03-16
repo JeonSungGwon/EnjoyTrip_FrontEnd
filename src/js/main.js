@@ -5,14 +5,15 @@ class MainPage {
   #map;
   #username;
   stores;
+  markers;
   clusterer;
 
-  constructor(app, map) {
+  constructor(app, map, markers) {
     this.#app = app;
     this.#map = map; // map 객체를 전달받음
     this.#username = "";
     this.stores = "";
-
+    this.markers = markers;
     this.clusterer = new kakao.maps.MarkerClusterer({
       map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
       averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
@@ -48,6 +49,8 @@ class MainPage {
     myBtnDiv.addEventListener("click", () => {
       navigateTo("../pages/myPage.html");
     });
+
+    
   }
 
   clickSearchBtn() {
@@ -105,17 +108,79 @@ class MainPage {
     cards.forEach((card) => {
       let cardWidth = card.clientWidth;
       card.style.height = `${cardWidth}px`;
+
+      // 카드 클릭 이벤트 추가
+    card.addEventListener("click", (event) => {
+      const cardId = event.currentTarget.id.replace("card", "");
+      const clickedStore = this.stores.find(store => store.contentid === cardId);
+      if (clickedStore) {
+          const position = new kakao.maps.LatLng(parseFloat(clickedStore.mapy), parseFloat(clickedStore.mapx));
+          map.setCenter(position);
+      }
+    });
     });
   }
 
   clickStar() {
-    console.log(this.stores);
-    this.stores.map((store) => {
-      let starIcon = this.#app.getElementById(`star${store.contentid}`);
+    for (let i = 0; i < this.stores.length; i++) {
+      let starIcon = this.#app.getElementById(`star${this.stores[i].contentid}`);
       starIcon.addEventListener("click", () => {
-        starIcon.setAttribute("src", "../../assets/images/full_star.svg");
+        const storeId = event.target.id.replace("star", "");
+        const clickedStore = this.stores.find(store => store.contentid === storeId);
+  
+        // 이미지 교체
+        if (starIcon.getAttribute("src") === "../../assets/images/full_star.svg") {
+          starIcon.setAttribute("src", "../../assets/images/empty_star.svg");
+          
+          const clickedMarker = this.markers.find(marker => marker.getTitle() === clickedStore.title);
+          
+          console.log(clickedMarker);
+          if (clickedMarker !== undefined) {
+            // 기존의 마커를 제거합니다.
+            this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
+            this.markers = this.markers.filter(marker => marker !== clickedMarker);
+            
+            // 새로운 마커를 생성하여 클러스터에 추가합니다.
+            const markerPosition = new kakao.maps.LatLng(
+              parseFloat(this.stores[i].mapy),
+              parseFloat(this.stores[i].mapx)
+            );
+            const newMarker = new kakao.maps.Marker({
+              position: markerPosition,
+              title: this.stores[i].title
+            });
+            this.markers.push(newMarker);
+            this.clusterer.addMarker(newMarker);
+          }
+        } else {
+          starIcon.setAttribute("src", "../../assets/images/full_star.svg");
+          // 클릭된 스타에 해당하는 마커를 찾습니다.
+          const clickedMarker = this.markers.find(marker => marker.getTitle() === clickedStore.title);
+          
+          console.log(clickedMarker);
+          if (clickedMarker !== undefined) {
+            
+            // 기존의 마커를 제거합니다.
+            this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
+            this.markers = this.markers.filter(marker => marker !== clickedMarker);
+            
+            // 새로운 마커를 생성하여 클러스터에 추가합니다.
+            const markerPosition = new kakao.maps.LatLng(
+              parseFloat(this.stores[i].mapy),
+              parseFloat(this.stores[i].mapx)
+            );
+            console.log(markerPosition,"adkasdkajdkasjdkasd");
+            const newMarker = new kakao.maps.Marker({
+              position: markerPosition,
+              title: this.stores[i].title,
+              image: new kakao.maps.MarkerImage('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', new kakao.maps.Size(30, 30), {offset: new kakao.maps.Point(15, 25)})
+            });
+            this.markers.push(newMarker);
+            this.clusterer.addMarker(newMarker);
+          }
+        }
       });
-    });
+    }
   }
 
   // 검색 함수
@@ -141,10 +206,10 @@ class MainPage {
         // 검색 결과가 있을 경우 마커 표시
         this.stores = data.response.body.items.item;
         this.createCards(this.stores);
-        const markers = [];
 
         // 기존 마커 제거
         this.clusterer.clear();
+        this.markers = [];
 
         this.stores.forEach((store) => {
           const markerPosition = new kakao.maps.LatLng(
@@ -163,7 +228,7 @@ class MainPage {
               "</div>",
           });
 
-          markers.push(marker);
+         this.markers.push(marker);
 
           kakao.maps.event.addListener(
             marker,
@@ -178,7 +243,7 @@ class MainPage {
         });
 
         // 클러스터에 마커 추가
-        this.clusterer.addMarkers(markers);
+        this.clusterer.addMarkers(this.markers);
 
         // 중심 좌표 변경
         const firstStore = this.stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
@@ -266,62 +331,62 @@ var mapOption = {
   level: 3, // 지도의 확대 레벨
 };
 var map = new kakao.maps.Map(mapContainer, mapOption);
-
+var markers = [];
 // 카카오 맵의 중심 좌표가 변경될 때마다 데이터를 가져오는 함수
-function getDataFromAPI() {
-  var center = map.getCenter(); // 맵의 중심 좌표를 가져옴
-  var url =
-    "https://apis.data.go.kr/B551011/KorService1/locationBasedList1?MobileOS=ETC&MobileApp=AppTest&_type=json&mapX=" +
-    center.getLng() +
-    "&mapY=" +
-    center.getLat() +
-    "&radius=1000&serviceKey=NHmBKryxoTzpzOQijbBqpbyIoX6HsTNr19mTO8DTHDk0VigM%2B2%2B4GDcFCg%2FBAzD1i3NTHd1H44D0gjLo5Elq%2Fw%3D%3D";
+// function getDataFromAPI() {
+//   var center = map.getCenter(); // 맵의 중심 좌표를 가져옴
+//   var url =
+//     "https://apis.data.go.kr/B551011/KorService1/locationBasedList1?MobileOS=ETC&MobileApp=AppTest&_type=json&mapX=" +
+//     center.getLng() +
+//     "&mapY=" +
+//     center.getLat() +
+//     "&radius=1000&serviceKey=NHmBKryxoTzpzOQijbBqpbyIoX6HsTNr19mTO8DTHDk0VigM%2B2%2B4GDcFCg%2FBAzD1i3NTHd1H44D0gjLo5Elq%2Fw%3D%3D";
 
-  fetch(url)
-    .then((res) => res.json())
-    .then((myJson) => {
-      var markers = [];
-      this.stores = myJson.response.body.items.item; // 주어진 데이터에서 item 배열 추출
+//   fetch(url)
+//     .then((res) => res.json())
+//     .then((myJson) => {
+//       var markers = [];
+//       this.stores = myJson.response.body.items.item; // 주어진 데이터에서 item 배열 추출
 
-      console.log(JSON.stringify(myJson, null, 1)); // JSON 데이터 출력
+//       console.log(JSON.stringify(myJson, null, 1)); // JSON 데이터 출력
 
-      for (var i = 0; i < this.stores.length; i++) {
-        var store = this.stores[i]; // 각 매장 정보
-        var markerPosition = new kakao.maps.LatLng(
-          parseFloat(store.mapy),
-          parseFloat(store.mapx)
-        ); // 위도와 경도
+//       for (var i = 0; i < this.stores.length; i++) {
+//         var store = this.stores[i]; // 각 매장 정보
+//         var markerPosition = new kakao.maps.LatLng(
+//           parseFloat(store.mapy),
+//           parseFloat(store.mapx)
+//         ); // 위도와 경도
 
-        var marker = new kakao.maps.Marker({
-          position: markerPosition,
-          title: store.title, // 마커에 표시할 타이틀
-        });
+//         var marker = new kakao.maps.Marker({
+//           position: markerPosition,
+//           title: store.title, // 마커에 표시할 타이틀
+//         });
 
-        var infowindow = new kakao.maps.InfoWindow({
-          content:
-            '<div style="padding:5px;font-size:12px;">' +
-            store.title +
-            "</div>", // 정보창에 표시할 내용
-        });
+//         var infowindow = new kakao.maps.InfoWindow({
+//           content:
+//             '<div style="padding:5px;font-size:12px;">' +
+//             store.title +
+//             "</div>", // 정보창에 표시할 내용
+//         });
 
-        markers.push(marker);
+//         markers.push(marker);
 
-        kakao.maps.event.addListener(
-          marker,
-          "mouseover",
-          makeOverListener(map, marker, infowindow)
-        );
-        kakao.maps.event.addListener(
-          marker,
-          "mouseout",
-          makeOutListener(infowindow)
-        );
-      }
+//         kakao.maps.event.addListener(
+//           marker,
+//           "mouseover",
+//           makeOverListener(map, marker, infowindow)
+//         );
+//         kakao.maps.event.addListener(
+//           marker,
+//           "mouseout",
+//           makeOutListener(infowindow)
+//         );
+//       }
 
-      clusterer.addMarkers(markers); // 클러스터에 마커 추가
-    });
-}
-new MainPage(document, map);
+//       clusterer.addMarkers(markers); // 클러스터에 마커 추가
+//     });
+// }
+new MainPage(document, map, markers);
 
 // 맵의 드래그 이벤트 등록
 //kakao.maps.event.addListener(map, "dragend", getDataFromAPI);

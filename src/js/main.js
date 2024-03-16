@@ -1,4 +1,4 @@
-import { navigateTo } from "./service.js";
+import { navigateTo, requestData, searchAPI } from "./service.js";
 
 class MainPage {
   #app;
@@ -123,43 +123,21 @@ class MainPage {
     const keyword = document
       .getElementById("searchBar")
       .getElementsByTagName("input")[0].value;
-    const citySelect = document.getElementById("city");
-    const subLocationSelect = document.getElementById("subLocation");
-
-    // 선택된 도시와 소분류 가져오기
-    const selectedCity = citySelect.value;
-
-    const selectedSubLocation = subLocationSelect.value;
-    console.log(
-      selectedCity,
-      selectedSubLocation,
-      keyword,
-      "asddddddddddddddddddddddddddddd"
-    );
+    const selectedCity = document.getElementById("city").value;
+    const selectedSubLocation = document.getElementById("subLocation").value;
 
     // 도시와 소분류가 선택되지 않았을 경우 알림 후 종료
     if (!selectedCity || !selectedSubLocation) {
       alert("도시와 소분류를 선택하세요.");
       return;
     }
+
     // API 요청을 위한 URL 생성
-    const apiUrl = `https://apis.data.go.kr/B551011/KorService1/searchKeyword1?MobileOS=ETC&MobileApp=%EC%97%AC%ED%96%89&_type=json&arrange=O&keyword=${encodeURIComponent(
-      keyword
-    )}&areaCode=${selectedCity}&sigunguCode=${selectedSubLocation}&serviceKey=NHmBKryxoTzpzOQijbBqpbyIoX6HsTNr19mTO8DTHDk0VigM%2B2%2B4GDcFCg%2FBAzD1i3NTHd1H44D0gjLo5Elq%2Fw%3D%3D`;
-    console.log(apiUrl);
+    const url = searchAPI(keyword, selectedCity, selectedSubLocation);
     try {
-      // API 호출
-      const response = await fetch(apiUrl);
-      console.log(response);
-      const data = await response.json();
-      console.log(JSON.stringify(data) + "aasds");
-      // 검색 결과에 따라 처리
-      if (
-        data.response &&
-        data.response.body &&
-        data.response.body.items &&
-        data.response.body.items.item
-      ) {
+      const data = await requestData(url);
+      console.log(data, "api 요청 결과");
+      if (data) {
         // 검색 결과가 있을 경우 마커 표시
         this.stores = data.response.body.items.item;
         this.createCards(this.stores);
@@ -215,10 +193,10 @@ class MainPage {
         // 콘솔에 데이터 출력
         console.log("검색 결과:", this.stores);
       } else {
-        console.log("검색 결과가 없습니다.");
+        console.log("검색 결과가 없습니다!");
       }
-    } catch (error) {
-      console.error("API 호출 중 오류 발생:", error);
+    } catch (e) {
+      console.log(e);
     }
   };
 }

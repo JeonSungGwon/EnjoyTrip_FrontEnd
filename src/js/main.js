@@ -1,3 +1,5 @@
+import { navigateTo } from "./service";
+
 class MainPage {
   #app;
   #map;
@@ -26,7 +28,7 @@ class MainPage {
     let token = localStorage.getItem("token");
     if (!token) {
       alert("사용자 정보가 없습니다! 로그인 페이지로 이동합니다.");
-      this.navigateTo("../pages/signPage.html");
+      navigateTo("../pages/signPage.html");
     }
   }
 
@@ -42,7 +44,7 @@ class MainPage {
     myBtnDiv.innerHTML = myBtn;
 
     myBtnDiv.addEventListener("click", () => {
-      this.navigateTo("../pages/myPage.html");
+      navigateTo("../pages/myPage.html");
     });
   }
 
@@ -92,7 +94,7 @@ class MainPage {
       cardsDiv.innerHTML = html;
 
       this.setCardWidthHeight(cardsDiv);
-      this.starClick();
+      this.clickStar();
     }
   }
 
@@ -104,7 +106,7 @@ class MainPage {
     });
   }
 
-  starClick() {
+  clickStar() {
     console.log(this.stores);
     this.stores.map((store) => {
       let starIcon = this.#app.getElementById(`star${store.contentid}`);
@@ -217,10 +219,6 @@ class MainPage {
       console.error("API 호출 중 오류 발생:", error);
     }
   };
-
-  navigateTo(url) {
-    window.location.href = url;
-  }
 }
 
 // service.js

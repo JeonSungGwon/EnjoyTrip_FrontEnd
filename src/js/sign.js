@@ -1,20 +1,5 @@
-const users = [
-  {
-    id: "000@naver.com",
-    name: "핑구성권",
-    password: "0000",
-  },
-  {
-    id: "1234@naver.com",
-    name: "쿼카하람",
-    password: "1234",
-  },
-  {
-    id: "222@naver.com",
-    name: "여행갈래",
-    password: "222",
-  },
-];
+import { users } from "../../data/userData";
+import { navigateTo } from "./service";
 
 class SignPage {
   #app;
@@ -87,21 +72,18 @@ class SignPage {
         }
         if (user.password !== this.#password) alert("비밀번호가 틀렸습니다.");
         break;
-      } else {
-        alert("회원 아이디가 없습니다!");
-        break;
-      }
+      } 
     }
   }
 
   successLogin() {
     localStorage.setItem("token", "hi");
     localStorage.setItem("username", this.#name);
-    window.location.href = "../pages/mainPage.html";
+    navigateTo("../pages/mainPage.html");
   }
 
   successSignUp() {
-    window.location.href = "../pages/signPage.html";
+    navigateTo("../pages/signPage.html");
   }
 }
 

@@ -2,7 +2,7 @@ import { navigateTo } from "./service.js";
 
 export function Header(profileImage, username) {
   let html = `
-    <img class="logo" src="../../assets/images/logo.svg" />
+    <img class="logo" id="logo" src="../../assets/images/logo.svg" />
     <div id="profileBtn" class="profile-btn" style="cursor: pointer">
         <img src=${profileImage} />
         <p>${username}</p></div>
@@ -12,8 +12,11 @@ export function Header(profileImage, username) {
   const header = document.getElementsByTagName("header")[0];
   header.innerHTML = html;
 
-  const profileBtn = document.getElementById("profileBtn");
-  profileBtn.addEventListener("click", () => {
+  document.getElementById("logo").addEventListener("click", () => {
+    navigateTo("../pages/mainPage.html");
+  });
+
+  document.getElementById("profileBtn").addEventListener("click", () => {
     navigateTo("../pages/myPage.html");
   });
 }

@@ -1,3 +1,5 @@
+import { navigateTo } from "./service.js";
+
 export function Header(profileImage, username) {
   let html = `
     <img class="logo" src="../../assets/images/logo.svg" />
@@ -13,5 +15,20 @@ export function Header(profileImage, username) {
   const profileBtn = document.getElementById("profileBtn");
   profileBtn.addEventListener("click", () => {
     navigateTo("../pages/myPage.html");
+  });
+}
+
+export function Modal(html) {
+  let body = document.getElementsByTagName("body")[0].innerHTML;
+  let modal = `
+        <div class="modal-background" id="modalBackground">
+            <div class="modal">${html}</div>
+        </div>
+    `;
+
+  document.getElementsByTagName("body")[0].innerHTML += modal;
+  document.getElementById("modalClose").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementsByTagName("body")[0].innerHTML = body;
   });
 }

@@ -50,7 +50,7 @@ header {
   z-index: 10;
 }
 
-header img {
+header > img {
   margin: 5px 20px;
 }
 
@@ -64,4 +64,43 @@ header img {
 
 .profile-btn p {
   margin: 0;
+}
+
+/* Modal */
+.modal-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  /* opacity: 0.5; */
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: #fff;
+  opacity: 1;
+  height: 50%;
+  width: 50%;
+  padding: 40px;
+  overflow-y: auto;
+  border-radius: 15px;
+}
+
+.modal .title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal p {
+  margin: 10px 0;
+}
+
+.modal .material-symbols-outlined {
+  cursor: pointer;
 }

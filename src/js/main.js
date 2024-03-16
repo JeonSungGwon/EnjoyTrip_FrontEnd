@@ -1,6 +1,11 @@
-import { Header } from "./component.js";
+import { Header, Modal } from "./component.js";
 import { navigateTo, requestData, searchAPI } from "./service.js";
-import { initializeKakaoMap, makeOverListener, makeOutListener } from "./kakao.js";
+import {
+  initializeKakaoMap,
+  makeOverListener,
+  makeOutListener,
+} from "./kakao.js";
+import { reviewData } from "../../data/reviewData.js";
 
 class MainPage {
   #app;
@@ -29,6 +34,7 @@ class MainPage {
     this.setUI();
     // event
     this.clickSearchBtn();
+    this.clickCard();
   }
 
   setUI() {
@@ -56,22 +62,25 @@ class MainPage {
   }
 
   createCards() {
-    const cardsDiv = this.#app.getElementById("cards");
+    const resultDiv = this.#app.getElementById("result");
     let html = "";
 
     if (this.stores.length === 0) {
-      html = "<p>검색 결과가 없습니다😢</p>";
+      resultDiv.innerHTML = `<h2 style="margin-bottom: 50px">😢 검색 결과가 없습니다.</h2>`;
     } else {
-      let storeLength = this.stores.length;
+      resultDiv.innerHTML = `
+        <h2>😊 검색된 결과 입니다.</h2>
+        <div id="cards" class="cards"></div>
+      `;
+
+      const cardsDiv = this.#app.getElementById("cards");
       this.stores.forEach((store) => {
         html += `
-          <div style="width: ${
-            storeLength < 5 ? 100 / storeLength - 2 : 18
-          }%; background-image: url(${
-          store.firstimage
-            ? store.firstimage
-            : "../../assets/images/noimage.svg"
-        });" id="card${store.contentid}" class="card" >
+          <div style="width: 18%; background-image: url(${
+            store.firstimage
+              ? store.firstimage
+              : "../../assets/images/noimage.svg"
+          });" id="card${store.contentid}" class="card" >
             <div class="hover">
               <p style="font-weight: bold; font-size: 18px">${
                 store.title.split("(")[0]
@@ -93,6 +102,7 @@ class MainPage {
 
       this.setCardWidthHeight(cardsDiv);
       this.clickStar();
+      this.clickCard();
     }
   }
 
@@ -116,6 +126,39 @@ class MainPage {
           map.setCenter(position);
         }
       });
+    });
+  }
+
+  clickCard() {
+    let html = "";
+    this.stores.map((store) => {
+      let reviewHTML = "";
+      reviewData.map((review) => {
+        reviewHTML += `
+          <div style="display: flex; width: 100%">
+            <p style="font-weight: 800; margin: 10px 0; width: 25%;">${review.username}: </p>
+            <p style="margin: 10px 0; width: 75%;">${review.content}</p>
+          </div>
+        `;
+      });
+
+      html = `
+        <div class="title">
+          <h1>📌 ${store.title}</h1>
+          <span class="material-symbols-outlined" id="modalClose">close</span>
+        </div>
+        <p>주소: ${store.addr1 + " " + store.addr2}</p>
+        <p>전화 번호: ${store.tel ? store.tel : "(없음)"}</p>
+        <hr style="margin: 20px 0;" />
+        <h2>✍🏻 이 장소에 등록된 리뷰</h2>
+        <div>${reviewHTML}</div>
+      `;
+
+      this.#app
+        .getElementById(`card${store.contentid}`)
+        .addEventListener("dblclick", () => {
+          Modal(html);
+        });
     });
   }
 
@@ -215,7 +258,7 @@ class MainPage {
     const selectedSubLocation = document.getElementById("subLocation").value;
 
     // 도시와 소분류가 선택되지 않았을 경우 알림 후 종료
-    if (!selectedCity || !selectedSubLocation) {
+    if (!selectedCity) {
       alert("도시와 소분류를 선택하세요.");
       return;
     }
@@ -307,4 +350,3 @@ var map = initializeKakaoMap();
 var markers = [];
 
 new MainPage(document, map, markers);
-

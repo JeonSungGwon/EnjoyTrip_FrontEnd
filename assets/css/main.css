@@ -73,20 +73,20 @@ button {
 .result {
   width: 80%;
   margin: auto;
-  margin-bottom: 50px;
 }
 
 .cards {
   display: flex;
   flex-wrap: wrap;
-  gap: auto;
+  gap: 2.4%;
 }
 
 .cards .card {
   position: relative;
   border-radius: 15px;
-  margin: 5px 0;
   background-size: cover;
+  margin-bottom: 50px;
+  border: #bbb solid 0.5px;
 }
 
 .hover {
@@ -120,9 +120,21 @@ button {
   left: 10px;
 }
 
+.cards .card .review-btn {
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
+  font-weight: 800;
+  color: #fff;
+  font-size: 16px;
+  text-shadow: -1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black;
+  cursor: pointer;
+}
+
+
 /* footer */
 footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   height: 50px;

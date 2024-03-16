@@ -1,14 +1,16 @@
-import { navigateTo } from "./service";
+import { navigateTo } from "./service.js";
 
 class MainPage {
   #app;
   #map;
+  #username;
   stores;
   clusterer;
 
   constructor(app, map) {
     this.#app = app;
     this.#map = map; // map 객체를 전달받음
+    this.#username = "";
     this.stores = "";
 
     this.clusterer = new kakao.maps.MarkerClusterer({
@@ -35,11 +37,11 @@ class MainPage {
   createMyPageBtn() {
     const myBtnDiv = this.#app.getElementById("myBtn");
 
-    let username = "핑구성권";
+    this.username = JSON.parse(localStorage.getItem("userInfo")).name;
     let profileImage = "../../assets/images/user_white.svg";
     const myBtn = `
       <img src=${profileImage} />
-      <p>${username}</p>
+      <p>${this.username}</p>
     `;
     myBtnDiv.innerHTML = myBtn;
 

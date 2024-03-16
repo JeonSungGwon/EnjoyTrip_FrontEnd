@@ -1,17 +1,15 @@
-import { users } from "../../data/userData";
-import { navigateTo } from "./service";
+import { navigateTo } from "./service.js";
 
 class SignPage {
   #app;
-  #id;
-  #password;
-  #name;
+
+  // UI Component
+  signinDiv;
+  signupDiv;
+  title;
 
   constructor(app) {
     this.#app = app;
-    this.#id = "";
-    this.#password = "";
-    this.#name = "";
 
     this.setUI();
 
@@ -20,35 +18,49 @@ class SignPage {
   }
 
   setUI() {
-    const signinSection = this.#app.getElementById("signin");
-    const signupSection = this.#app.getElementById("signup");
+    this.signinDiv = this.#app.getElementById("signin");
+    this.signupDiv = this.#app.getElementById("signup");
+    this.title = this.#app.getElementById("title_text");
 
     // 로그인, 회원가입 버튼 가져오기
-    const signupButton = this.#app.getElementById("sign_on");
-    const sign_btn = this.#app.getElementById("sign_btn");
-    const main_title = this.#app.getElementById("title_text");
+    const goSignupBtn = this.#app.getElementById("goSignupBtn");
+    const signupBtn = this.#app.getElementById("signupBtn");
 
     // '회원가입' 버튼 클릭 시 회원가입 섹션 보이기
-    signupButton.addEventListener("click", () => {
-      signinSection.style.display = "none";
-      signupSection.style.display = "block";
-      main_title.style.display = "none";
+    goSignupBtn.addEventListener("click", () => {
+      this.setSignupUI();
     });
-    // sign_btn.addEventListener("click", () => {
-    //   signinSection.style.display = "block";
-    //   signupSection.style.display = "none";
-    //   main_title.style.display = "block";
-    // });
+
+    signupBtn.addEventListener("click", () => {
+      this, this.setSigninUI();
+    });
+  }
+
+  setSignupUI() {
+    this.signinDiv.style.display = "none";
+    this.signupDiv.style.display = "block";
+    this.title.style.display = "none";
+  }
+
+  setSigninUI() {
+    this.signinDiv.style.display = "block";
+    this.signupDiv.style.display = "none";
+    this.title.style.display = "block";
   }
 
   signin() {
     let form = this.#app.getElementById("signinForm");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.#id = this.#app.getElementById("id").value;
-      this.#password = this.#app.getElementById("password").value;
+      let id = this.#app.getElementById("inId").value;
+      let password = this.#app.getElementById("inPwd").value;
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-      this.findUserInfo();
+      if (userInfo.id === id && userInfo.password === password) {
+        this.successSignin();
+      } else {
+        alert("아이디 또는 비밀 번호를 확인하세요.");
+      }
     });
   }
 
@@ -56,35 +68,27 @@ class SignPage {
     let form = this.#app.getElementById("signupForm");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      let id = document.getElementById("");
-      this.successSignUp();
+      let userInfo = {
+        name: document.getElementById("upName").value,
+        id: document.getElementById("upId").value,
+        password: document.getElementById("upPwd").value,
+      };
+
+      this.successSignup(userInfo);
     });
   }
 
-  findUserInfo() {
-    for (let i = 0; i < users.length; i++) {
-      let user = users[i];
-      if (user.id === this.#id) {
-        if (user.password === this.#password) {
-          alert("로그인 성공!");
-          this.#name = user.name;
-          this.successLogin();
-        }
-        if (user.password !== this.#password) alert("비밀번호가 틀렸습니다.");
-        break;
-      } 
-    }
-  }
-
-  successLogin() {
+  successSignin() {
+    alert("로그인 성공!");
     localStorage.setItem("token", "hi");
-    localStorage.setItem("username", this.#name);
     navigateTo("../pages/mainPage.html");
   }
 
-  successSignUp() {
+  successSignup() {
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+    alert("회원 가입이 완료 되었습니다!");
     navigateTo("../pages/signPage.html");
   }
 }
 
-page = new SignPage(document);
+new SignPage(document);

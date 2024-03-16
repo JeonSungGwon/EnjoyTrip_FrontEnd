@@ -140,7 +140,6 @@ class MainPage {
             (marker) => marker.getTitle() === clickedStore.title
           );
 
-          console.log(clickedMarker);
           if (clickedMarker !== undefined) {
             // 기존의 마커를 제거합니다.
             this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
@@ -159,6 +158,8 @@ class MainPage {
             });
             this.markers.push(newMarker);
             this.clusterer.addMarker(newMarker);
+
+            this.removeFromLocalStorage(clickedStore);
           }
         } else {
           starIcon.setAttribute("src", "../../assets/images/full_star.svg");
@@ -167,7 +168,7 @@ class MainPage {
             (marker) => marker.getTitle() === clickedStore.title
           );
 
-          console.log(clickedMarker);
+    
           if (clickedMarker !== undefined) {
             // 기존의 마커를 제거합니다.
             this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
@@ -180,7 +181,7 @@ class MainPage {
               parseFloat(this.stores[i].mapy),
               parseFloat(this.stores[i].mapx)
             );
-            console.log(markerPosition, "adkasdkajdkasjdkasd");
+
             const newMarker = new kakao.maps.Marker({
               position: markerPosition,
               title: this.stores[i].title,
@@ -192,8 +193,15 @@ class MainPage {
             });
             this.markers.push(newMarker);
             this.clusterer.addMarker(newMarker);
+
+            this.addToLocalStorage(clickedStore);
           }
         }
+
+        //로컬 스토리지 콘솔 찍기
+        let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+        console.log("즐겨찾기 로컬 스토리지 정보 : ",favoriteStores);
+
       });
     }
   }
@@ -216,7 +224,7 @@ class MainPage {
     const url = searchAPI(keyword, selectedCity, selectedSubLocation);
     try {
       const data = await requestData(url);
-      console.log(data, "api 요청 결과");
+
       if (data) {
         // 검색 결과가 있을 경우 마커 표시
         this.stores = data.response.body.items.item;
@@ -267,7 +275,6 @@ class MainPage {
           parseFloat(firstStore.mapy),
           parseFloat(firstStore.mapx)
         );
-        console.log(center);
         map.setCenter(center);
 
         // 콘솔에 데이터 출력
@@ -279,7 +286,22 @@ class MainPage {
       console.log(e);
     }
   };
+
+  addToLocalStorage(store) {
+    let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+    favoriteStores.push(store);
+    localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
+    
+  }
+
+  removeFromLocalStorage(store) {
+      let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+      favoriteStores = favoriteStores.filter((s) => s.contentid !== store.contentid);
+      localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
+  }
 }
+
+
 
 var map = initializeKakaoMap();
 var markers = [];

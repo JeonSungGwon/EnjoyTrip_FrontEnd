@@ -173,7 +173,7 @@ class MainPage {
             const newMarker = new kakao.maps.Marker({
               position: markerPosition,
               title: this.stores[i].title,
-              image: new kakao.maps.MarkerImage('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', new kakao.maps.Size(30, 30), {offset: new kakao.maps.Point(15, 25)})
+              image: new kakao.maps.MarkerImage('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png', new kakao.maps.Size(25, 40), {offset: new kakao.maps.Point(13, 37)})
             });
             this.markers.push(newMarker);
             this.clusterer.addMarker(newMarker);
@@ -247,7 +247,7 @@ class MainPage {
 
         // 중심 좌표 변경
         const firstStore = this.stores[0]; // 첫 번째 상점의 좌표를 기준으로 설정
-        console.log(firstStore.mapx, firstStore.mapy + "asdasdasdas");
+        
         const center = new kakao.maps.LatLng(
           parseFloat(firstStore.mapy),
           parseFloat(firstStore.mapx)

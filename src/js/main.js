@@ -131,18 +131,19 @@ class MainPage {
 
   clickCard() {
     let html = "";
-    this.stores.map((store) => {
-      let reviewHTML = "";
-      reviewData.map((review) => {
-        reviewHTML += `
+    this.stores
+      ? this.stores.map((store) => {
+          let reviewHTML = "";
+          reviewData.map((review) => {
+            reviewHTML += `
           <div style="display: flex; width: 100%">
             <p style="font-weight: 800; margin: 10px 0; width: 25%;">${review.username}: </p>
             <p style="margin: 10px 0; width: 75%;">${review.content}</p>
           </div>
         `;
-      });
+          });
 
-      html = `
+          html = `
         <div class="title">
           <h1>📌 ${store.title}</h1>
           <span class="material-symbols-outlined" id="modalClose">close</span>
@@ -154,12 +155,13 @@ class MainPage {
         <div>${reviewHTML}</div>
       `;
 
-      this.#app
-        .getElementById(`card${store.contentid}`)
-        .addEventListener("dblclick", () => {
-          Modal(html);
-        });
-    });
+          this.#app
+            .getElementById(`card${store.contentid}`)
+            .addEventListener("dblclick", () => {
+              Modal(html);
+            });
+        })
+      : null;
   }
 
   clickStar() {
@@ -211,7 +213,6 @@ class MainPage {
             (marker) => marker.getTitle() === clickedStore.title
           );
 
-    
           if (clickedMarker !== undefined) {
             // 기존의 마커를 제거합니다.
             this.clusterer.removeMarker(clickedMarker); // 클러스터에서도 제거합니다.
@@ -242,9 +243,9 @@ class MainPage {
         }
 
         //로컬 스토리지 콘솔 찍기
-        let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
-        console.log("즐겨찾기 로컬 스토리지 정보 : ",favoriteStores);
-
+        let favoriteStores =
+          JSON.parse(localStorage.getItem("favoriteStores")) || [];
+        console.log("즐겨찾기 로컬 스토리지 정보 : ", favoriteStores);
       });
     }
   }
@@ -331,20 +332,21 @@ class MainPage {
   };
 
   addToLocalStorage(store) {
-    let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+    let favoriteStores =
+      JSON.parse(localStorage.getItem("favoriteStores")) || [];
     favoriteStores.push(store);
     localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
-    
   }
 
   removeFromLocalStorage(store) {
-      let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
-      favoriteStores = favoriteStores.filter((s) => s.contentid !== store.contentid);
-      localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
+    let favoriteStores =
+      JSON.parse(localStorage.getItem("favoriteStores")) || [];
+    favoriteStores = favoriteStores.filter(
+      (s) => s.contentid !== store.contentid
+    );
+    localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
   }
 }
-
-
 
 var map = initializeKakaoMap();
 var markers = [];

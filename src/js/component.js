@@ -48,11 +48,3 @@ export function setCardWidthHeight(card) {
   let cardWidth = card.clientWidth;
   card.style.height = `${cardWidth}px`;
 }
-
-export function Modal(html) {
-  let modal = `
-        
-    `;
-
-  document.getElementsByTagName("body")[0].innerHTML += modal;
-}

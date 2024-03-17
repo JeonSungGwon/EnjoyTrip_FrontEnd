@@ -1,4 +1,5 @@
 import { Card, Footer, Header, setCardWidthHeight } from "./component.js";
+import { navigateTo } from "./service.js";
 
 class MyPage {
   #app;
@@ -13,9 +14,14 @@ class MyPage {
     this.#favorites = [];
 
     this.setUI();
+
+    this.logout();
+    this.leave();
   }
 
   setUI() {
+    if (!localStorage.getItem("token")) navigateTo("../pages/signPage.html");
+
     this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
     this.#profileImage = "../../assets/images/user_white.svg";
 
@@ -58,6 +64,26 @@ class MyPage {
 
     cards.forEach((card) => {
       setCardWidthHeight(card);
+    });
+  }
+
+  logout() {
+    this.#app.getElementById("logout").addEventListener("click", () => {
+      alert("로그아웃 되셨습니다!");
+      localStorage.removeItem("token");
+      navigateTo("../pages/signPage.html");
+    });
+  }
+
+  leave() {
+    this.#app.getElementById("leave").addEventListener("click", () => {
+      let flag = window.confirm("정말로 회원을 탈퇴 하실거에요?🥲");
+      if (flag) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("favoriteStores");
+        navigateTo("../pages/signPage.html");
+      }
     });
   }
 }

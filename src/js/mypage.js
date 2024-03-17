@@ -1,5 +1,4 @@
 import { Card, Footer, Header, setCardWidthHeight } from "./component.js";
-import { navigateTo } from "./service.js";
 
 class MyPage {
   #app;
@@ -14,14 +13,9 @@ class MyPage {
     this.#favorites = [];
 
     this.setUI();
-
-    this.logout();
-    this.leave();
   }
 
   setUI() {
-    if (!localStorage.getItem("token")) navigateTo("../pages/signPage.html");
-
     this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
    
 
@@ -40,6 +34,7 @@ class MyPage {
       </div>
       <span class="material-symbols-outlined" id="editProfile">edit</span>
     `;
+  
     const editProfileButton = this.#app.getElementById("editProfile");
     const profileImageElement = this.#app.getElementById("profileImage");
   
@@ -76,7 +71,6 @@ class MyPage {
 
     let html = "";
     this.#favorites = JSON.parse(localStorage.getItem("favoriteStores"));
-    if (!this.#favorites) return;
     this.#favorites.map((favorite) => {
       html += Card(
         favorite.contentId,
@@ -97,27 +91,41 @@ class MyPage {
     cards.forEach((card) => {
       setCardWidthHeight(card);
     });
+
+   this.clickStar()
   }
 
-  logout() {
-    this.#app.getElementById("logout").addEventListener("click", () => {
-      alert("로그아웃 되셨습니다!");
-      localStorage.removeItem("token");
-      navigateTo("../pages/signPage.html");
-    });
-  }
+  clickStar() {
+    const favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
 
-  leave() {
-    this.#app.getElementById("leave").addEventListener("click", () => {
-      let flag = window.confirm("정말로 회원을 탈퇴 하실거에요?🥲");
-      if (flag) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userInfo");
-        localStorage.removeItem("favoriteStores");
-        navigateTo("../pages/signPage.html");
-      }
-    });
-  }
+    for (let i = 0; i < favoriteStores.length; i++) {
+        const storeId = favoriteStores[i].contentid;
+        let starIcon = this.#app.getElementById(`star${storeId}`);
+
+        starIcon.addEventListener("click", (event) => {
+            const storeId = event.target.id.replace("star", "");
+
+            // 해당 storeId를 가진 아이템을 favoriteStores에서 제거하고 다시 렌더링
+            this.removeFavoriteStore(storeId);
+        });
+    }
+}
+
+removeFavoriteStore(storeId) {
+  // 현재 즐겨찾기 목록 가져오기
+  let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+
+  // 해당 storeId를 가진 아이템을 제거
+  favoriteStores = favoriteStores.filter(store => store.contentid !== storeId);
+
+  // 로컬 스토리지 업데이트
+  localStorage.setItem('favoriteStores', JSON.stringify(favoriteStores));
+
+  // 다시 렌더링
+  this.setFavorites();
+}
+
+
 }
 
 new MyPage(document);

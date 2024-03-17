@@ -1,6 +1,9 @@
 import { navigateTo } from "./service.js";
 
-export function Header(profileImage = "../../assets/images/full.svg" , username) {
+export function Header(
+  profileImage = "../../assets/images/full.svg",
+  username
+) {
   let html = `
     <img class="logo" id="logo" src="../../assets/images/logo.svg" />
     <div id="profileBtn" class="profile-btn" style="cursor: pointer">
@@ -21,12 +24,12 @@ export function Header(profileImage = "../../assets/images/full.svg" , username)
   });
 }
 
-
 export function Footer() {
   let footer = `
-    <p id="ssafy">SSAFY</p>
-    <p id="contactus">ContactUs</p>
+    <p>SSAFY</p>
+    <p>ContactUs</p>
     `;
+
   document.getElementsByTagName("footer")[0].innerHTML = footer;
 
   // 싸피 클릭
@@ -82,4 +85,15 @@ export function Card(id, image, title, addr, width) {
 export function setCardWidthHeight(card) {
   let cardWidth = card.clientWidth;
   card.style.height = `${cardWidth}px`;
+}
+
+export function Modal(html) {
+  let body = document.getElementsByTagName("body")[0].innerHTML;
+  let modal = `
+        <div class="modal-background" id="modalBackground">
+            <div class="modal">${html}</div>
+        </div>
+    `;
+
+  document.getElementsByTagName("body")[0].innerHTML += modal;
 }

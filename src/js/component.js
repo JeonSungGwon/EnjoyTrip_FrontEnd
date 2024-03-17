@@ -42,7 +42,10 @@ export function Footer() {
   // ContactUs 클릭시 모달창 띄움
   document.getElementById("contactus").addEventListener("click", () => {
     let modalHtml = `  
-          <h1 style="text-align: center; background-color: #4e71a7; color: #fff; padding: 0.5rem;">SSAFY 11기 대전 7반 백하람 & 전성권</h1>
+          <div class="title">
+            <h1 style="text-align: center; background-color: #4e71a7; color: #fff; padding: 1rem 2rem; margin: 0;">SSAFY 11기 대전 7반 백하람 & 전성권</h1>
+            <span class="material-symbols-outlined" id="modalClose">close</span>
+          </div>
           <h2>📺 Github</h2>
           <h3>하람(@ramrami-B) | 성권(@JeonSungGwon)</h3>
           <h2>📧 Email</h2>

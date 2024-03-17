@@ -2,7 +2,6 @@ import {
   Card,
   Footer,
   Header,
-  Modal,
   setCardWidthHeight,
 } from "./component.js";
 import {

@@ -94,7 +94,7 @@ class SignPage {
         name: name,
         id: id,
         password: password,
-        profileImage: "white_user.svg",
+        profileImage: "../../assets/images/white_user.svg",
       };
 
       this.successSignup(userInfo);

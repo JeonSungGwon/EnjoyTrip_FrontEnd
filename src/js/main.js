@@ -5,7 +5,12 @@ import {
   Modal,
   setCardWidthHeight,
 } from "./component.js";
-import { navigateTo, requestData, searchAPI } from "./service.js";
+import {
+  navigateTo,
+  requestData,
+  searchAPI,
+  subLocationAPI,
+} from "./service.js";
 import {
   initializeKakaoMap,
   makeOverListener,
@@ -15,32 +20,39 @@ import { reviewData } from "../../data/reviewData.js";
 
 class MainPage {
   #app;
-  #map;
   #profileImage;
   #username;
+  //kakao 맵에 필요한 변수들
+  map;
   stores;
   markers;
   clusterer;
 
-  constructor(app, map, markers) {
+  constructor(app) {
     // 변수 초기화
     this.#app = app;
-    this.#map = map; // map 객체를 전달받음
-    this.#username = "";
-    this.#profileImage = "";
+    this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
+    this.#profileImage = JSON.parse(
+      localStorage.getItem("userInfo")
+    ).profileImage;
+
+    this.map = initializeKakaoMap();
     this.stores = "";
-    this.markers = markers;
+    this.markers = [];
+
     this.clusterer = new kakao.maps.MarkerClusterer({
-      map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+      map: this.map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
       averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
       minLevel: 5, // 클러스터 할 최소 지도 레벨
     });
 
     // 화면
     this.setUI();
+
     // event
     this.clickSearchBtn();
     this.clickCard();
+    this.selectLocation();
   }
 
   setUI() {
@@ -50,12 +62,9 @@ class MainPage {
       navigateTo("../pages/signPage.html");
     }
 
-    this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
-    this.#profileImage = "../../assets/images/user_white.svg";
-
+    // UI 세팅
     Header(this.#profileImage, this.#username);
     Footer();
-
     this.createCards();
   }
 
@@ -100,6 +109,7 @@ class MainPage {
         `;
         html += "</div>";
       });
+
       cardsDiv.innerHTML = html;
       const cards = cardsDiv.querySelectorAll(".card");
 
@@ -116,7 +126,7 @@ class MainPage {
               parseFloat(clickedStore.mapy),
               parseFloat(clickedStore.mapx)
             );
-            map.setCenter(position);
+            this.map.setCenter(position);
           }
         });
       });
@@ -141,16 +151,16 @@ class MainPage {
           });
 
           html = `
-        <div class="title">
-          <h1>📌 ${store.title}</h1>
-          <span class="material-symbols-outlined" id="modalClose">close</span>
-        </div>
-        <p>주소: ${store.addr1 + " " + store.addr2}</p>
-        <p>전화 번호: ${store.tel ? store.tel : "(없음)"}</p>
-        <hr style="margin: 20px 0;" />
-        <h2>✍🏻 이 장소에 등록된 리뷰</h2>
-        <div>${reviewHTML}</div>
-      `;
+            <div class="title">
+              <h1>📌 ${store.title}</h1>
+              <span class="material-symbols-outlined" id="modalClose">close</span>
+            </div>
+            <p>주소: ${store.addr1 + " " + store.addr2}</p>
+            <p>전화 번호: ${store.tel ? store.tel : "(없음)"}</p>
+            <hr style="margin: 20px 0;" />
+            <h2>✍🏻 이 장소에 등록된 리뷰</h2>
+            <div>${reviewHTML}</div>
+          `;
 
           this.#app
             .getElementById(`card${store.contentid}`)
@@ -247,6 +257,52 @@ class MainPage {
     }
   }
 
+  async fetchSubLocations(areaCode) {
+    const apiUrl = subLocationAPI(areaCode);
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      return data.response.body.items.item;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return [];
+    }
+  }
+
+  selectLocation() {
+    this.#app
+      .getElementsByTagName("select")[0]
+      .addEventListener("change", (e) => {
+        let selectedCity = e.target.value;
+        this.updateSubLocationOptions(selectedCity);
+      });
+  }
+
+  async updateSubLocationOptions(selectedCity) {
+    const subLocationSelect = document.getElementById("subLocation");
+
+    subLocationSelect.innerHTML = '<option value="">불러오는 중..</option>';
+
+    if (selectedCity) {
+      const subLocations = await this.fetchSubLocations(selectedCity);
+      subLocationSelect.innerHTML =
+        '<option value="">시, 군, 구를 선택하세요.</option>';
+      subLocations.forEach((location) => {
+        // 각 구를 옵션으로 추가
+        const option = document.createElement("option");
+        option.value = location.code;
+        option.textContent = location.name;
+        subLocationSelect.appendChild(option);
+      });
+    }
+
+    // 도시 선택 변경시 이벤트 리스너
+    citySelect.addEventListener("change", async () => updateSubLocationOptions);
+
+    // 초기화
+    updateSubLocationOptions();
+  }
+
   // 검색 함수
   search = async () => {
     const keyword = document
@@ -297,7 +353,7 @@ class MainPage {
           kakao.maps.event.addListener(
             marker,
             "mouseover",
-            makeOverListener(map, marker, infowindow)
+            makeOverListener(this.map, marker, infowindow)
           );
           kakao.maps.event.addListener(
             marker,
@@ -316,7 +372,7 @@ class MainPage {
           parseFloat(firstStore.mapy),
           parseFloat(firstStore.mapx)
         );
-        map.setCenter(center);
+        this.map.setCenter(center);
 
         // 콘솔에 데이터 출력
         console.log("검색 결과:", this.stores);
@@ -343,56 +399,12 @@ class MainPage {
     );
     localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
   }
+
   isFavoriteStore(contentId) {
-    let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
-    return favoriteStores.some(store => store.contentid === contentId);
+    let favoriteStores =
+      JSON.parse(localStorage.getItem("favoriteStores")) || [];
+    return favoriteStores.some((store) => store.contentid === contentId);
   }
 }
 
-var map = initializeKakaoMap();
-var markers = [];
-
-new MainPage(document, map, markers);
-document.addEventListener("DOMContentLoaded", function () {
-  const citySelect = document.getElementById("city");
-
-  // API 호출 및 데이터 가져오는 함수
-  async function fetchSubLocations(areaCode) {
-    const apiUrl = `https://apis.data.go.kr/B551011/KorService1/areaCode1?numOfRows=100&MobileOS=ETC&MobileApp=%EC%97%AC%ED%96%89&areaCode=${areaCode}&_type=json&serviceKey=NHmBKryxoTzpzOQijbBqpbyIoX6HsTNr19mTO8DTHDk0VigM%2B2%2B4GDcFCg%2FBAzD1i3NTHd1H44D0gjLo5Elq%2Fw%3D%3D`;
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-      return data.response.body.items.item;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return [];
-    }
-  }
-
-  // 셀렉트 박스 업데이트 함수
-  async function updateSubLocationOptions() {
-    const selectedCity = citySelect.value;
-    const subLocationSelect = document.getElementById("subLocation");
-    console.log(subLocationSelect);
-
-    // 이전에 선택된 구 제거
-    subLocationSelect.innerHTML = '<option value="">소분류</option>';
-
-    if (selectedCity) {
-      const subLocations = await fetchSubLocations(selectedCity);
-      subLocations.forEach((location) => {
-        // 각 구를 옵션으로 추가
-        const option = document.createElement("option");
-        option.value = location.code;
-        option.textContent = location.name;
-        subLocationSelect.appendChild(option);
-      });
-    }
-  }
-
-  // 도시 선택 변경시 이벤트 리스너
-  citySelect.addEventListener("change", updateSubLocationOptions);
-
-  // 초기화
-  updateSubLocationOptions();
-});
+new MainPage(document);

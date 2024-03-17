@@ -25,22 +25,10 @@ export function Header(
 }
 
 export function Footer() {
-  let footer = `
-    <p>SSAFY</p>
-    <p>ContactUs</p>
-    `;
-
-  document.getElementsByTagName("footer")[0].innerHTML = footer;
-
   // 싸피 클릭
   document.getElementById("ssafy").addEventListener("click", () => {
     window.open("https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp");
   });
-
-  document.getElementsByTagName("body")[0].innerHTML += ` 
-    <div class="modal-background" id="modalBackground">
-      <div class="modal" id="modal"></div>
-    </div>`;
 
   // ContactUs 클릭시 모달창 띄움
   document.getElementById("contactus").addEventListener("click", () => {

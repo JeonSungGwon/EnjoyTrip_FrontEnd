@@ -48,8 +48,12 @@ section:last-child h1 {
   gap: 5%;
 }
 
+.favorites .buttons {
+  display: flex;
+}
+
 .favorites button {
-  width: 100%;
+  width: 50%;
   border-radius: 5px;
   background-color: #fff;
   border: none;

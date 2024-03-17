@@ -47,17 +47,18 @@ class MyPage {
         favorite.addr1.split(" ")[0] + " " + favorite.addr1.split(" ")[1],
         "30%"
       );
+      html += `
+            <img src="../../assets/images/full_star.svg" alt="star" id="star${favorite.contentid}" />
+        `;
       html += "</div>";
-      // html += `
-      //   <div>
-      //     <button>리뷰 등록하기</button>
-      //     <button>삭제</button>
-      //   </div>
-      // `;
     });
 
     favoritesDiv.innerHTML = html;
-    setCardWidthHeight(favoritesDiv, ".card", false);
+    const cards = favoritesDiv.querySelectorAll(".card");
+
+    cards.forEach((card) => {
+      setCardWidthHeight(card);
+    });
   }
 }
 

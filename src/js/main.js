@@ -82,6 +82,10 @@ class MainPage {
 
       const cardsDiv = this.#app.getElementById("cards");
       this.stores.forEach((store) => {
+        // favoriteStores에 있는지 확인
+        const isFavorite = this.isFavoriteStore(store.contentid);
+        // 별 이미지 선택
+        const starImage = isFavorite ? "full_star.svg" : "empty_star.svg";
         html += Card(
           store.contentid,
           store.firstimage
@@ -92,7 +96,7 @@ class MainPage {
           "18%"
         );
         html += `
-            <img src="../../assets/images/empty_star.svg" alt="star" id="star${store.contentid}" />
+            <img src="../../assets/images/${starImage}" alt="star" id="star${store.contentid}" />
         `;
         html += "</div>";
       });
@@ -338,6 +342,10 @@ class MainPage {
       (s) => s.contentid !== store.contentid
     );
     localStorage.setItem("favoriteStores", JSON.stringify(favoriteStores));
+  }
+  isFavoriteStore(contentId) {
+    let favoriteStores = JSON.parse(localStorage.getItem("favoriteStores")) || [];
+    return favoriteStores.some(store => store.contentid === contentId);
   }
 }
 

@@ -72,6 +72,7 @@ class SignPage {
         name: document.getElementById("upName").value,
         id: document.getElementById("upId").value,
         password: document.getElementById("upPwd").value,
+        profileImage : "white_user.svg"
       };
 
       this.successSignup(userInfo);

@@ -1,9 +1,4 @@
-import {
-  Card,
-  Footer,
-  Header,
-  setCardWidthHeight,
-} from "./component.js";
+import { Card, Footer, Header, setCardWidthHeight } from "./component.js";
 import {
   navigateTo,
   requestData,
@@ -33,10 +28,9 @@ class MainPage {
   constructor(app) {
     // 변수 초기화
     this.#app = app;
-    this.#username = JSON.parse(localStorage.getItem("userInfo")).name;
-    this.#profileImage = JSON.parse(
-      localStorage.getItem("userInfo")
-    ).profileImage;
+    let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    this.#username = userInfo ? userInfo.name : "";
+    this.#profileImage = userInfo ? userInfo.profileImage : "";
 
     this.map = initializeKakaoMap();
     this.stores = "";

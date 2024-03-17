@@ -23,11 +23,42 @@ export function Header(profileImage, username) {
 
 export function Footer() {
   let footer = `
-    <p>SSAFY</p>
-    <p>ContactUs</p>
+    <p id="ssafy">SSAFY</p>
+    <p id="contactus">ContactUs</p>
     `;
-
   document.getElementsByTagName("footer")[0].innerHTML = footer;
+
+  // 싸피 클릭
+  document.getElementById("ssafy").addEventListener("click", () => {
+    window.open("https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp");
+  });
+
+  document.getElementsByTagName("body")[0].innerHTML += ` 
+    <div class="modal-background" id="modalBackground">
+      <div class="modal" id="modal"></div>
+    </div>`;
+
+  // ContactUs 클릭시 모달창 띄움
+  document.getElementById("contactus").addEventListener("click", () => {
+    let modalHtml = `  
+          <h1 style="text-align: center; background-color: #4e71a7; color: #fff; padding: 0.5rem;">SSAFY 11기 대전 7반 백하람 & 전성권</h1>
+          <h2>📺 Github</h2>
+          <h3>하람(@ramrami-B) | 성권(@JeonSungGwon)</h3>
+          <h2>📧 Email</h2>
+          <h3>하람 developer.venice@gmail.com</h3>
+          <h3>성권 jeonsg9904@gmail.com</h3>
+      `;
+    document.getElementById("modalBackground").style.display = "flex";
+    document.getElementById("modal").innerHTML = modalHtml;
+
+    // 닫기
+    document.getElementById("modalClose").addEventListener("click", (e) => {
+      e.preventDefault();
+      const modal = document.getElementById("modalBackground");
+      modal.style.display = "none";
+      document.getElementById("modal").innerHTML = "";
+    });
+  });
 }
 
 export function Card(id, image, title, addr, width) {

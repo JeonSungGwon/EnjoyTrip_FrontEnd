@@ -58,8 +58,5 @@ export function Modal(html) {
     `;
 
   document.getElementsByTagName("body")[0].innerHTML += modal;
-  document.getElementById("modalClose").addEventListener("click", (e) => {
-    e.preventDefault();
-    document.getElementsByTagName("body")[0].innerHTML = body;
-  });
+  
 }

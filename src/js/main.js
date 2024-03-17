@@ -166,6 +166,12 @@ class MainPage {
             .getElementById(`card${store.contentid}`)
             .addEventListener("dblclick", () => {
               Modal(html);
+              document
+                .getElementById("modalClose")
+                .addEventListener("click", (e) => {
+                  e.preventDefault();
+                  console.log("modal close");
+                });
             });
         })
       : null;
@@ -295,12 +301,6 @@ class MainPage {
         subLocationSelect.appendChild(option);
       });
     }
-
-    // 도시 선택 변경시 이벤트 리스너
-    citySelect.addEventListener("change", async () => updateSubLocationOptions);
-
-    // 초기화
-    updateSubLocationOptions();
   }
 
   // 검색 함수

@@ -1,11 +1,11 @@
 import { navigateTo } from "./service.js";
 
-export function Header(profileImage, username) {
+export function Header(profileImage = "../../assets/images/full.svg" , username) {
   let html = `
     <img class="logo" id="logo" src="../../assets/images/logo.svg" />
     <div id="profileBtn" class="profile-btn" style="cursor: pointer">
-        <img src=${profileImage} />
-        <p>${username}</p></div>
+        <img src=${profileImage} style="border-radius: 100%; width: 50px; height: 50px;" />
+        <p>${username}</p>
     </div>
   `;
 
@@ -20,6 +20,7 @@ export function Header(profileImage, username) {
     navigateTo("../pages/myPage.html");
   });
 }
+
 
 export function Footer() {
   let footer = `

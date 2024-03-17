@@ -41,7 +41,7 @@ class MyPage {
     this.#favorites = JSON.parse(localStorage.getItem("favoriteStores"));
     this.#favorites.map((favorite) => {
       html += Card(
-        favorite.id,
+        favorite.contentId,
         favorite.firstimage,
         favorite.title.split("("),
         favorite.addr1.split(" ")[0] + " " + favorite.addr1.split(" ")[1],

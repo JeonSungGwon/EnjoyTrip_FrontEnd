@@ -44,29 +44,9 @@ export function Card(id, image, title, addr, width) {
     `;
 }
 
-export function setCardWidthHeight(div, selector, isEvent) {
-  const cards = div.querySelectorAll(selector);
-  cards.forEach((card) => {
-    let cardWidth = card.clientWidth;
-    card.style.height = `${cardWidth}px`;
-
-    // 이벤트
-    isEvent
-      ? card.addEventListener("click", (event) => {
-          const cardId = event.currentTarget.id.replace("card", "");
-          const clickedStore = this.stores.find(
-            (store) => store.contentid === cardId
-          );
-          if (clickedStore) {
-            const position = new kakao.maps.LatLng(
-              parseFloat(clickedStore.mapy),
-              parseFloat(clickedStore.mapx)
-            );
-            map.setCenter(position);
-          }
-        })
-      : null;
-  });
+export function setCardWidthHeight(card) {
+  let cardWidth = card.clientWidth;
+  card.style.height = `${cardWidth}px`;
 }
 
 export function Modal(html) {

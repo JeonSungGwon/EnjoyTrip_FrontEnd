@@ -97,13 +97,25 @@ class MainPage {
         html += "</div>";
       });
       cardsDiv.innerHTML = html;
+      const cards = cardsDiv.querySelectorAll(".card");
 
-      setCardWidthHeight(
-        cardsDiv,
-        ".card",
-        // 지도 이벤트
-        true
-      );
+      cards.forEach((card) => {
+        setCardWidthHeight(card);
+
+        card.addEventListener("click", (event) => {
+          const cardId = event.currentTarget.id.replace("card", "");
+          const clickedStore = this.stores.find(
+            (store) => store.contentid === cardId
+          );
+          if (clickedStore) {
+            const position = new kakao.maps.LatLng(
+              parseFloat(clickedStore.mapy),
+              parseFloat(clickedStore.mapx)
+            );
+            map.setCenter(position);
+          }
+        });
+      });
 
       this.clickStar();
       this.clickCard();

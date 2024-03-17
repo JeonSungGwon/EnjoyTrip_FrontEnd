@@ -22,6 +22,9 @@ class MainPage {
   #app;
   #profileImage;
   #username;
+  #location;
+  #subLocation;
+  #keyword;
   //kakao 맵에 필요한 변수들
   map;
   stores;
@@ -74,6 +77,7 @@ class MainPage {
     searchDiv.addEventListener("submit", (e) => {
       e.preventDefault();
       this.search();
+      this.createCards();
     });
   }
 
@@ -137,40 +141,43 @@ class MainPage {
   }
 
   clickCard() {
-    let html = "";
     this.stores
       ? this.stores.map((store) => {
-          let reviewHTML = "";
-          reviewData.map((review) => {
-            reviewHTML += `
-          <div style="display: flex; width: 100%">
-            <p style="font-weight: 800; margin: 10px 0; width: 25%;">${review.username}: </p>
-            <p style="margin: 10px 0; width: 75%;">${review.content}</p>
-          </div>
-        `;
-          });
-
-          html = `
-            <div class="title">
-              <h1>📌 ${store.title}</h1>
-              <span class="material-symbols-outlined" id="modalClose">close</span>
-            </div>
-            <p>주소: ${store.addr1 + " " + store.addr2}</p>
-            <p>전화 번호: ${store.tel ? store.tel : "(없음)"}</p>
-            <hr style="margin: 20px 0;" />
-            <h2>✍🏻 이 장소에 등록된 리뷰</h2>
-            <div>${reviewHTML}</div>
-          `;
-
           this.#app
             .getElementById(`card${store.contentid}`)
             .addEventListener("dblclick", () => {
-              Modal(html);
+              let reviewHTML = "";
+              reviewData.map((review) => {
+                reviewHTML += `
+                  <div style="display: flex; width: 100%">
+                    <p style="font-weight: 800; margin: 10px 0; width: 25%;">${review.username}: </p>
+                    <p style="margin: 10px 0; width: 75%;">${review.content}</p>
+                  </div>
+                `;
+              });
+              let modalHtml = `
+                <div class="title">
+                  <h1>📌 ${store.title}</h1>
+                  <span class="material-symbols-outlined" id="modalClose">close</span>
+                </div>
+                <p>주소: ${store.addr1 + " " + store.addr2}</p>
+                <p>전화 번호: ${store.tel ? store.tel : "(없음)"}</p>
+                <hr style="margin: 20px 0;" />
+                <h2>✍🏻 이 장소에 등록된 리뷰</h2>
+                <div>${reviewHTML}</div>
+              `;
+              this.#app.getElementById("modalBackground").style.display =
+                "flex";
+              this.#app.getElementById("modal").innerHTML = modalHtml;
+
+              // 닫기
               document
                 .getElementById("modalClose")
                 .addEventListener("click", (e) => {
                   e.preventDefault();
-                  console.log("modal close");
+                  const modal = document.getElementById("modalBackground");
+                  modal.style.display = "none";
+                  this.#app.getElementById("modal").innerHTML = "";
                 });
             });
         })
@@ -279,18 +286,18 @@ class MainPage {
     this.#app
       .getElementsByTagName("select")[0]
       .addEventListener("change", (e) => {
-        let selectedCity = e.target.value;
-        this.updateSubLocationOptions(selectedCity);
+        this.#location = e.target.value;
+        this.updateSubLocationOptions(this.#location);
       });
   }
 
-  async updateSubLocationOptions(selectedCity) {
+  async updateSubLocationOptions() {
     const subLocationSelect = document.getElementById("subLocation");
 
     subLocationSelect.innerHTML = '<option value="">불러오는 중..</option>';
 
-    if (selectedCity) {
-      const subLocations = await this.fetchSubLocations(selectedCity);
+    if (this.#location) {
+      const subLocations = await this.fetchSubLocations(this.#location);
       subLocationSelect.innerHTML =
         '<option value="">시, 군, 구를 선택하세요.</option>';
       subLocations.forEach((location) => {
@@ -305,24 +312,21 @@ class MainPage {
 
   // 검색 함수
   search = async () => {
-    const keyword = document
-      .getElementById("searchBar")
-      .getElementsByTagName("input")[0].value;
-    const selectedCity = document.getElementById("city").value;
-    const selectedSubLocation = document.getElementById("subLocation").value;
+    this.#keyword = this.#app.getElementById("keyword").value;
+    this.#subLocation = this.#app.getElementById("subLocation").value;
 
     // 도시와 소분류가 선택되지 않았을 경우 알림 후 종료
-    if (!selectedCity) {
+    if (!this.#location) {
       alert("도시와 소분류를 선택하세요.");
       return;
     }
 
     // API 요청을 위한 URL 생성
-    const url = searchAPI(keyword, selectedCity, selectedSubLocation);
+    const url = searchAPI(this.#keyword, this.#location, this.#subLocation);
     try {
       const data = await requestData(url);
-
-      if (data) {
+      console.log(this.#keyword, this.#location, this.#subLocation);
+      if (data.response) {
         // 검색 결과가 있을 경우 마커 표시
         this.stores = data.response.body.items.item;
         this.createCards(this.stores);

@@ -18,6 +18,8 @@ class SignPage {
   }
 
   setUI() {
+    if (localStorage.getItem("token")) navigateTo("../pages/mainPage.html");
+
     this.signinDiv = this.#app.getElementById("signin");
     this.signupDiv = this.#app.getElementById("signup");
     this.title = this.#app.getElementById("title_text");
@@ -54,8 +56,18 @@ class SignPage {
       e.preventDefault();
       let id = this.#app.getElementById("inId").value;
       let password = this.#app.getElementById("inPwd").value;
+
+      if (!(id && password)) {
+        alert("아이디, 비밀 번호를 입력해 주세요!");
+        return;
+      }
+
       let userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
+      if (userInfo === null) {
+        let flag = confirm("회원 정보가 없습니다! 회원 가입 하시겠어요?");
+        if (flag) this.setSignupUI();
+      }
       if (userInfo.id === id && userInfo.password === password) {
         this.successSignin();
       } else {
@@ -68,11 +80,21 @@ class SignPage {
     let form = this.#app.getElementById("signupForm");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      let name = document.getElementById("upName").value;
+      let id = document.getElementById("upId").value;
+      let password = document.getElementById("upPwd").value;
+
+      if (!(name && id && password)) {
+        alert("모든 값을 입력해 주세요!");
+        this.setSignupUI();
+        return;
+      }
+
       let userInfo = {
-        name: document.getElementById("upName").value,
-        id: document.getElementById("upId").value,
-        password: document.getElementById("upPwd").value,
-        profileImage : "white_user.svg"
+        name: name,
+        id: id,
+        password: password,
+        profileImage: "white_user.svg",
       };
 
       this.successSignup(userInfo);
